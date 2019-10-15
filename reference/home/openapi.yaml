@@ -110,6 +110,24 @@ paths:
                     id: 100203
                     status: VALID
       description: '### Узнать текущий аккаунт'
+  '/account/change/{account_id}':
+    parameters:
+      - type: string
+        name: account_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: number
+    post:
+      summary: Change Account
+      responses:
+        '200':
+          description: OK
+      description: |-
+        ### Смена аккаунта
+
+        Если у вашего пользователя есть доступ к нескольким аккаунтам, то некоторые запросы к API могут работать неправильно, т.к. может быть выбран неверный аккаунт.
 components:
   schemas: {}
   securitySchemes:

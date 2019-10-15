@@ -1,0 +1,36 @@
+openapi: 3.0.0
+info:
+  title: Home
+  version: '1.0'
+  description: 'Адрес хоста для запросов: https://cloud.speechanalytics.ru/'
+servers:
+  - url: 'http://dev.peechanalytics'
+    description: dev
+  - url: 'https://cloud.speechanalytics.ru'
+    description: prod
+paths:
+  /auth/login:
+    post:
+      summary: ''
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+              examples:
+                Успешный ответ:
+                  value:
+                    success: ok
+      description: ''
+components:
+  schemas: {}
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: Basic
+      description: ''

@@ -25,12 +25,94 @@ paths:
               examples:
                 Успешный ответ:
                   value:
-                    success: ok
-      description: ''
+                    success: true
+      description: |-
+        В ответе есть директива **set-cookie** эту куку надо использовать во всех последующих запросах. |
+        Время жизни cookie - 1 год.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+            examples:
+              Admin login:
+                value:
+                  username: admin
+                  password: admin
+          application/xml:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+            examples:
+              example-1:
+                value:
+                  username: admin
+                  password: admin
+        description: ''
+  /account/available_accounts:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+              examples:
+                example-1:
+                  value:
+                    - id: 100203
+                      name: Test Account
+                    - id: 500448
+                      name: New pilot
+                    - id: 612306
+                      name: sipuni_test
+      description: '### Список доступных аккаунтов'
+    parameters: []
+  /account:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  status:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    id: 100203
+                    status: VALID
+      description: '### Узнать текущий аккаунт'
 components:
   schemas: {}
   securitySchemes:
     Basic:
       type: http
       scheme: Basic
-      description: ''
+      description: cookies and header

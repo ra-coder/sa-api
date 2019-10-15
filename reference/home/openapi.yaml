@@ -77,7 +77,7 @@ paths:
                     name:
                       type: string
               examples:
-                example-1:
+                Успешный ответ:
                   value:
                     - id: 100203
                       name: Test Account

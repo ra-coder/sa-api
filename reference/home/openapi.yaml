@@ -11,7 +11,7 @@ servers:
 paths:
   /auth/login:
     post:
-      summary: ''
+      summary: Login
       responses:
         '200':
           description: OK
@@ -58,9 +58,10 @@ paths:
                   username: admin
                   password: admin
         description: ''
+      operationId: Login
   /account/available_accounts:
     get:
-      summary: Your GET endpoint
+      summary: Available Accounts
       tags: []
       responses:
         '200':
@@ -89,7 +90,7 @@ paths:
     parameters: []
   /account:
     get:
-      summary: Your GET endpoint
+      summary: Get Account
       tags: []
       responses:
         '200':

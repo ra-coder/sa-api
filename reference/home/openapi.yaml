@@ -134,12 +134,10 @@ paths:
               schema:
                 type: object
                 properties: {}
-      description: |-
+      description: |
         ### Смена аккаунта
 
         Если у вашего пользователя есть доступ к нескольким аккаунтам, то некоторые запросы к API могут работать неправильно, т.к. может быть выбран неверный аккаунт.
-
-        тест
 components:
   schemas: {}
   securitySchemes:

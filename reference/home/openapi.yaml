@@ -128,7 +128,7 @@ paths:
             Set-Cookie:
               schema:
                 type: string
-              description: 'flask_login_remember_token=9b4fdf03-4951-4747-a3ea-98612120aa36|4a58a3f12ba52ffa7b055a3ccda3b1389665f504143304c1bf2df462749417be47466bff15b11a01364a409c7fe2a3c6932f41bc33f53bcee274c154066109d4; session=.eJwlzjtuw0AMBNC7sJaA5ZLcjy9jkEsSdpMAslUFuXuUBNMMphi8L7jnEa8H3N7HGRvcnw43MHQrk2e1RMK25tWFSuNZtAZ5E6yCbBlhffholtfEK6eSDIpqU7lI5TZqX17EzVQoFV05bXDNJMfe2TGuQ-LBsoSFw2kFwwa61uf58f7zYPnNBucrjn_gNE7PQvvlwp07910pdJ-jYcVaVKnB9w_2Nj0P.XaXfXQ.LLDN8vo_Iv4-PzOjHxoaZAQneSk'
+              description: ''
           content:
             application/json:
               schema:
@@ -138,6 +138,8 @@ paths:
         ### Смена аккаунта
 
         Если у вашего пользователя есть доступ к нескольким аккаунтам, то некоторые запросы к API могут работать неправильно, т.к. может быть выбран неверный аккаунт.
+
+        тест
 components:
   schemas: {}
   securitySchemes:

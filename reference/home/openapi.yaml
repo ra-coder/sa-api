@@ -10,7 +10,7 @@ servers:
     description: prod
 paths:
   /auth/login:
-    $ref: 'https://github.com/kamirt/sa-api/blob/master/reference/home/openapi.yaml'
+    $ref: 'https://github.com/kamirt/sa-api/blob/master/reference/home/paths/login.yaml'
   /account/available_accounts:
     get:
       summary: Available Accounts
@@ -62,34 +62,6 @@ paths:
                     id: 100203
                     status: VALID
       description: '### Узнать текущий аккаунт'
-  '/account/change/{account_id}':
-    parameters:
-      - type: string
-        name: account_id
-        in: path
-        required: true
-        description: ''
-        schema:
-          type: number
-    post:
-      summary: Change Account
-      responses:
-        '200':
-          description: OK
-          headers:
-            Set-Cookie:
-              schema:
-                type: string
-              description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
-      description: |
-        ### Смена аккаунта
-
-        Если у вашего пользователя есть доступ к нескольким аккаунтам, то некоторые запросы к API могут работать неправильно, т.к. может быть выбран неверный аккаунт.
 components:
   schemas: {}
   securitySchemes:

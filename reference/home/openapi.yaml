@@ -10,55 +10,7 @@ servers:
     description: prod
 paths:
   /auth/login:
-    post:
-      summary: Login
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-              examples:
-                Успешный ответ:
-                  value:
-                    success: true
-      description: |-
-        В ответе есть директива **set-cookie** эту куку надо использовать во всех последующих запросах. |
-        Время жизни cookie - 1 год.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-            examples:
-              Admin login:
-                value:
-                  username: admin
-                  password: admin
-          application/xml:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-            examples:
-              example-1:
-                value:
-                  username: admin
-                  password: admin
-        description: ''
-      operationId: Login
+    $ref: 'https://github.com/kamirt/sa-api/blob/master/reference/home/openapi.yaml'
   /account/available_accounts:
     get:
       summary: Available Accounts

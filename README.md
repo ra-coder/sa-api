@@ -1,0 +1,1 @@
+Опубликованная версия здесь: https://stoplight.io/p/docs-preview/gh/kamirt/sa-api/reference/home/openapi.yaml

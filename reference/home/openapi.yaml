@@ -196,6 +196,88 @@ paths:
           required: true
       description: ''
       operationId: ''
+  '/account/{account_id}/groups':
+    parameters:
+      - type: string
+        name: account_id
+        in: path
+        required: true
+    get:
+      summary: Получить список групп операторов
+      tags:
+        - groups
+        - operators
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  operators:
+                    type: array
+                    items:
+                      $ref: ../common/models/operator_group.v1.json
+              examples:
+                Пример:
+                  value:
+                    groups:
+                      - id: 463
+                        name: Продажи
+                      - id: 464
+                        name: (Без группы)
+                        default: true
+                      - id: 500
+                        name: Prodaji
+                        telephony: true
+    post:
+      summary: Обновить список групп операторов
+      tags:
+        - groups
+        - operators
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+              examples:
+                Пример:
+                  value:
+                    groups:
+                      - id: 463
+                        name: Продажи
+                      - id: 464
+                        name: (Без группы)
+                        default: true
+                      - id: 500
+                        name: Prodaji
+                        telephony: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groups:
+                  type:
+                    - string
+                    - array
+                  items:
+                    $ref: ../common/models/operator_group.v1.json
+            examples:
+              Пример:
+                value:
+                  groups:
+                    - id: 463
+                      name: Продажи
+                    - id: 464
+                      name: (Без группы)
+                      default: true
+      description: "Группы с ```\"telephony\": true``` будут проигнорированы (их нельзя редактировать).\n\nДолжна быть 1 группа с ```\"default\": true``` - это группа, которая назначается новым операторам группы которы которые могут появится в системе.\n\nГруппы, которых нет в теле запроса и у которых нет операторов будут удалены.\nЕсли в такой группе есть операторы- будет ответ с http кодом 400. \n\nЕсли в системе есть группа с таким же ```id```, то  ее название (```name```) обновится. "
 components:
   schemas: {}
   securitySchemes:

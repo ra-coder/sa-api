@@ -1,0 +1,9 @@
+title: Success
+type: object
+properties:
+  success:
+    type: boolean
+x-examples:
+  example-1:
+    value:
+      success: true

@@ -93,12 +93,12 @@ paths:
       parameters: []
       security:
         - Basic: []
-  '/account/change/{account_id}':
-    parameters:
-      - type: string
-        name: account_id
-        in: path
-        required: true
+        '/account/change/{account_id}':
+          parameters:
+            - type: string
+              name: account_id
+              in: path
+              required: true
     post:
       summary: Change Account(Project)
       tags: []
@@ -963,6 +963,62 @@ paths:
                         - 179389
         description: ''
       description: "**detailed_matches** - список, сколько раз какое слово найдено\n\n**highlights** - размеченные вхождения. \n\nphrase - номер реплики (нумерация с 0)\n\nsymbol - номер первого символа вхождения\n\nlength - длина вхождения (в символах)\n\nrole - кто произнес реплику (\"client\" / \"operator\")\n\n**matches** - количество вхождений\n\n**transcript** - транскрибация звонка"
+        Если у вашего пользователя есть доступ к нескольким аккаунтам, то некоторые запросы к API могут работать неправильно, т.к. может быть выбран неверный аккаунт.
+  '/account/{account_id}/operators':
+    parameters:
+      - type: string
+        name: account_id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Получить список операторов
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groups:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+              examples:
+                Пример ответа:
+                  value:
+                    groups:
+                      - id: 463
+                        name: Продажи
+                      - id: 464
+                        name: (Без группы)
+                    operators:
+                      - enabled_recognition: true
+                        enabled_recognition_date: 1571130000
+                        group_id: 463
+                        name: Александр
+                        phone: '270'
+                      - enabled_recognition: true
+                        enabled_recognition_date: 1571130000
+                        group_id: 464
+                        name: Василий
+                        phone: '280'
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: session_id
+          required: true
+      description: ''
+      operationId: ''
 components:
   schemas: {}
   securitySchemes:

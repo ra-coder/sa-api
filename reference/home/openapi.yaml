@@ -160,12 +160,14 @@ paths:
                   groups:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        name:
-                          type: string
+                      $ref: ../common/models/operator_group.v1.json
+                  operators:
+                    type: array
+                    items:
+                      $ref: ../common/models/operator.v1.json
+                required:
+                  - groups
+                  - operators
               examples:
                 Пример ответа:
                   value:
@@ -174,6 +176,7 @@ paths:
                         name: Продажи
                       - id: 464
                         name: (Без группы)
+                        default: true
                     operators:
                       - enabled_recognition: true
                         enabled_recognition_date: 1571130000

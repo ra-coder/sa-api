@@ -1,0 +1,46 @@
+{
+  "title": "operator",
+  "type": "object",
+  "x-examples": {
+    "Полный пример": {
+      "value": {
+        "enabled_recognition": true,
+        "enabled_recognition_date": 1571130000,
+        "group_id": null,
+        "name": "Александр",
+        "phone": "270",
+        "telephony_group_id": 10,
+        "telephony_name": "Alexander"
+      }
+    }
+  },
+  "properties": {
+    "phone": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "group_id": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "enabled_recognition_date": {
+      "type": "integer"
+    },
+    "enabled_recognition": {
+      "type": "boolean"
+    },
+    "telephony_group_id": {
+      "type": "integer"
+    },
+    "telephony_name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "phone"
+  ]
+}

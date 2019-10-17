@@ -1,0 +1,5 @@
+title: AuthHeader
+type: object
+properties:
+  id:
+    type: string

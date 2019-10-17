@@ -1,0 +1,13 @@
+title: AvailableAccount
+type: object
+properties:
+  id:
+    type: number
+  name:
+    type: string
+description: Доступные аккаунты
+x-examples:
+  availableAccount:
+    value:
+      id: 100203
+      name: Test Account

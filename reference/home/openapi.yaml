@@ -2,8 +2,8 @@ swagger: '2.0'
 info:
   contact:
     name: Admin
-  description: 'Адрес хоста для запросов: https://cloud.speechanalytics.ru/'
-  title: Документация API SpeechAnalytics
+  description: 'Документация API  https://speechanalytics.ru/'
+  title: SpeechAnalytics
   version: '1.0'
 schemes:
   - https

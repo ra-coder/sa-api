@@ -3,7 +3,7 @@ info:
   contact:
     name: Admin
   description: 'Адрес хоста для запросов: https://cloud.speechanalytics.ru/'
-  title: Home
+  title: Документация API SpeechAnalytics
   version: '1.0'
 schemes:
   - https
@@ -780,6 +780,93 @@ paths:
       description: словари
       operationId: vocabularies
       summary: Список доступных словарей
+  /reports/triggers:
+    post:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              triggers:
+                items:
+                  properties:
+                    endpoint_url:
+                      type: string
+                    id:
+                      type: integer
+                    report_id:
+                      type: integer
+                    report_name:
+                      type: string
+                  type: object
+                type: array
+            type: object
+      security:
+        - Basic: []
+      summary: Список подписок на триггеры
+      operationId: triggerList
+  '/reports/trigger/{trigger_id}/delete':
+    parameters:
+      - in: path
+        name: trigger_id
+        required: true
+        type: string
+    post:
+      parameters: []
+      responses:
+        '200':
+          description: OK
+      description: |-
+        Пример:
+
+            POST /api/v1/reports/trigger/2/delete
+      summary: Удаление подписки на триггеры
+      operationId: triggerSubcribtionRemove
+  /reports/trigger:
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            properties:
+              endpoint_url:
+                type: string
+              report_id:
+                type: integer
+            type: object
+      responses:
+        '200':
+          description: OK
+      security:
+        - Basic: []
+      description: |-
+        Метод принимает json-объект с параметрами:
+        ```
+        report_id - идентификатор отчета
+        endpoint_url - url на который будут отправляться звонки
+        ```
+      summary: Подписка на триггеры
+      operationId: triggerSubscription
+  /reports:
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties: {}
+            type: object
+      tags: []
+      summary: Отчеты
+      description: "Это API позволяет получать информацию по избранным звонкам: как только\n    приходит новый звонок, удовлетворяющий фильтрам отчета, система отправляет\n    информацию по звонку на указанный сервер.\n\n\n    ### Схема работы с API:\n\n\n    1. Получить список отчетов через метод `/reports`\n\n    2. Выбрать нужные отчеты и создать по ним триггеры с помощью метода\n    `/reports/trigger`, указав при этом номер отчета и url-адрес, на который\n    будут отправляться POST-запросы с данными о звонках.\n\n    3. Принимать и обрабатывать сообщения со звонками.\n\n\n    ## Специальные триггеры\n\n\n    Можно использовать готовые интеграции на основе триггеров со сторонними\n    системами. \n\n    Для этого надо указать \"специальный\" endpoint_url для подписки на триггеры.\n\n\n    ### MarketingHub\n\n\n    Для [marketinghub.ru](http://marketinghub.ru/) можно настроить экспорт\n    телефонных номеров клиентов из звонков, попавших в отчет в аудиторию для\n    последующего таргетинга рекламы.\n\n    В качестве endpoint_url надо указать урл вида marketinghub://<access_token>\n\n\n    ### Usedesk\n\n\n    Для [usedesk.ru](http://usedesk.ru/) можно настроить пересылку транскрибаций\n    звонков, попавших в отчет. В качестве endpoint_url надо указать урл вида\n    usedesk://<api_token>@api.usedesk.ru/\n\n\n    ## Обработка сообщений\n\n\n    Endpoint указанный в запросе должен принимать на вход json со следующими\n    полями:\n\n        report_id - id отчёта\n        calls - список звонков, где каждый звонок - это объект со следующими полями:\n        \n        id - внутренний id звонка Speech Analytics\n        telephony_id - id звонка из телефонии\n        date_of_call - дата звонка\n        phone_number_client - номер клиента\n        phone_number_operator - номер оператора\n        operator_name - имя оператора\n        transcript - транскрибация звонка (текст распознанного диалога)\n\n    Пример:\n\n        {\n           \"report_id\":12345678,\n           \"calls\":[\n              {\n                 \"id\":1482470,\n                 \"telephony_id\":\"1557839653.1800447\",\n                 \"date_of_call\":1557839654,\n                 \"phone_number_client\":\"+79261708580\",\n                 \"phone_number_operator\":\"270\",\n                 \"transcript\":[...]\n              },\n              {\n                 \"id\":1481981,\n                 \"telephony_id\":\"1557829764.1796966\",\n                 \"date_of_call\":1557829764,\n                 \"phone_number_client\":\"+79261708580\",\n                 \"phone_number_operator\":\"270\",\n                 \"transcript\":[\n                       {\n                          \"phrase\":\"Добрый день\",\n                          \"timeEnd\":0.5100000000000051,\n                          \"timeBegin\":0.2700000000000031,\n                          \"role\":\"client\"\n                       },\n                       {\n                          \"phrase\":\"Здравствуйте\",\n                          \"timeEnd\":4.1,\n                          \"timeBegin\":1.46,\n                          \"role\":\"operator\"\n                       },\n                       {\n                          \"phrase\":\"Через час перезвоните, пожалуйста.\",\n                          \"timeEnd\":10.890000000000008,\n                          \"timeBegin\":5.190000000000005,\n                          \"role\":\"client\"\n                       },\n                       {\n                          \"phrase\":\"Так через час\",\n                          \"timeEnd\":13.860000000000001,\n                          \"timeBegin\":11.55,\n                          \"role\":\"operator\"\n                       },\n                       ...\n                  ],\n              },\n              ...\n           ]\n        }\n\n    Ответ на запрос тоже должен быть в json-формате, ожидается следующий ответ:\n\n        {\"success\": true}\n\n    Подробную информацию о звонке можно получить с помощью GET-запроса\n    `/api/v1/calls/{id звонка}`\n\n\n    # Примеры триггеров:\n\n\n    ### **Пример 1. Молниеносное оповещение о технических проблемах на сайте\n    компании.**\n\n\n    Клиент зашел на сайт компании, перешел на страницу ЖК, но не смог записаться\n    на демонстрацию объекта. Он позвонил по указанному на сайте телефонному\n    номеру и сообщил, что «**`На сайте проблема, я не смог записаться на\n    демонстрацию`**» и попросил записать его по телефону. \n\n    **Действие:** Через 5 минут этот звонок попал в отчет \"`**Проблемы на\n    сайте**`\" по фразе клиента из звонка \"`**на сайте проблема**`\". Мы сразу же\n    по данному событию отправили IT-специалисту письмо либо создали тикет в\n    поддержке с задачей проверить информацию из звонка клиента. Включили в тикет\n    название отчета, номер клиента, дату звонка, ссылку на запись звонка,\n    транскрибацию диалога.\n\n\n    ### **Пример 2. Маркетинговые активности на основе того, что говорит ваш\n    клиент.**\n\n\n    Клиент позвонил застройщику и уточнил какие варианты квартир есть в \"`**ЖК\n    Дикий Запад**`\", также сказал, что обязательно нужен \"**`подземный\n    паркинг`**\". Менеджер дал всю необходимую информацию и клиент пошел думать. \n\n    **Действие:** Этот звонок через 5 минут попал в отчеты «`**ЖК Дикий\n    Запад**`» и «**`Подземный паркинг`**» по произнесенным клиентом ключевым\n    словам. По данному событию мы тут же передали телефон клиента в аудитории\n    рекламной площадки Facebook Ads. Одна аудитория используются в связке с\n    креативами где мы продаем ЖК Дикий Запад, а вторая демонстрирует, что можно\n    получить скидку на паркинг 50% при оплате квартиры и паркинга до конца\n    месяца. Таким образом мы моментально подогреваем клиента для продажи.\n\n\n    ### **Пример 3. Как узнать об ошибке менеджера и спасти сделку с клиентом за\n    5 минут.**\n\n\n    На финальной стадии сделки клиент позвонил менеджеру и спросил \"`**Почему в\n    договоре отсутствует обещанная скидка**`\". Менеджер сказал, что скидки\n    больше не действуют. Клиент очень расстроился и отказался от сделки. \n\n    **Действие:** Этот звонок через 5 минут попал в отчет \"**`Невыполненные\n    обещания`**\" и тут же отправилось письмо и смс руководителю отдела продаж с\n    детальной информацией в том числе, кто был менеджер. Руководитель отдела\n    связался с менеджером, дальше с клиентом и вернул сделку."
+      operationId: reports
 definitions: {}
 securityDefinitions:
   Basic:
@@ -787,5 +874,5 @@ securityDefinitions:
     scheme: Basic
     type: http
 x-components: {}
-host: 'https://cloud.speechanalytics.ru/'
-basePath: api/v1
+host: 'https://cloud.speechanalytics.ru'
+basePath: /api/v1

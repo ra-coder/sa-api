@@ -884,7 +884,8 @@ paths:
 definitions: {}
 securityDefinitions:
   Basic:
-    description: cookies and header
+    description: |
+      password and login
     scheme: Basic
     type: http
   sessionid:
@@ -895,3 +896,7 @@ securityDefinitions:
 x-components: {}
 basePath: /api/v1
 host: integration2.speech.one
+produces:
+  - application/json
+consumes:
+  - application/json

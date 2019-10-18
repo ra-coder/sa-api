@@ -364,6 +364,8 @@ paths:
         Время жизни cookie - 1 год.
       operationId: Login
       summary: Login
+      security:
+        - Basic: []
   /calls/calls_period:
     post:
       consumes:
@@ -891,5 +893,5 @@ securityDefinitions:
     in: cookie
     description: Значение куки sessionid
 x-components: {}
-host: cloud.speechanalytics.ru
 basePath: /api/v1
+host: integration2.speech.one

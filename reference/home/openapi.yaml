@@ -891,5 +891,5 @@ securityDefinitions:
     in: cookie
     description: Значение куки sessionid
 x-components: {}
-host: 'https://cloud.speechanalytics.ru'
+host: cloud.speechanalytics.ru
 basePath: /api/v1

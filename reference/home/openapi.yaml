@@ -885,6 +885,11 @@ securityDefinitions:
     description: cookies and header
     scheme: Basic
     type: http
+  sessionid:
+    name: sessionid
+    type: apiKey
+    in: cookie
+    description: Значение куки sessionid
 x-components: {}
 host: 'https://cloud.speechanalytics.ru'
 basePath: /api/v1

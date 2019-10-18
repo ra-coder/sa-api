@@ -1,870 +1,324 @@
-openapi: 3.0.0
+swagger: '2.0'
 info:
-  title: Home
-  version: '1.0'
-  description: 'Адрес хоста для запросов: https://cloud.speechanalytics.ru/'
   contact:
     name: Admin
-servers:
-  - url: 'https://{serverType}.speech.one/api/{basePath}'
-    description: The production API server
-    variables:
-      serverType:
-        enum:
-          - integration
-          - preproduction
-        default: integration
-      port:
-        default: '3000'
-      basePath:
-        default: v1
+  description: 'Адрес хоста для запросов: https://cloud.speechanalytics.ru/'
+  title: Home
+  version: '1.0'
+schemes:
+  - https
 paths:
-  /auth/login:
-    post:
-      summary: Login
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ./models/success.v1.yaml
-              examples:
-                Успешный ответ:
-                  value:
-                    success: true
-      description: |-
-        В ответе есть директива **set-cookie** эту куку надо использовать во всех последующих запросах. |
-        Время жизни cookie - 1 год.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: ./models/user.v1.yaml
-            examples:
-              Admin login:
-                value:
-                  username: admin
-                  password: admin
-          application/xml:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-            examples:
-              example-1:
-                value:
-                  username: admin
-                  password: admin
-        description: ''
-      operationId: Login
-      tags:
-        - login
-  /account/available_accounts:
-    get:
-      summary: Available Accounts
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: ./models/availableaccount.v1.yaml
-              examples:
-                availableAccounts:
-                  value:
-                    - id: 100203
-                      name: Test Account
-      description: '### Список доступных аккаунтов'
-      parameters: []
-      security:
-        - Basic: []
-      operationId: availableAccounts
-  '/account/change/{account_id}':
-    parameters:
-      - type: string
-        name: account_id
-        in: path
-        required: true
-    post:
-      summary: Change Account(Project)
-      tags: []
-      responses:
-        '200':
-          description: OK
-      description: '### Смена аккаунта (проекта)'
-      security:
-        - Basic: []
-      operationId: changeAccount
   /account:
     get:
-      summary: Get Account
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ./models/account.v1.yaml
-              examples: {}
-      description: '### Узнать текущий аккаунт'
-      parameters:
-        - schema:
-            type: string
-          in: header
-      security:
-        - Basic: []
-      operationId: account
-  /rating/templates:
-    get:
-      summary: Список доступных шаблонов оценок
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    decription:
-                      type: string
-                    frozen:
-                      type: boolean
-                    functions:
-                      type: array
-                      items: {}
-                    id:
-                      type: number
-                    name:
-                      type: string
-              examples:
-                example-1:
-                  value:
-                    - description: Набор параметров для оценки канала клиента. Находит проблемные диалоги.
-                      frozen: false
-                      functions: []
-                      id: 42074243
-                      name: Лояльность клиентов
-                    - description: 'Набор параметров для оценки канала оператора. Контролируется время снятия трубки, процент речи оператора, запрещенные фразы и т.д.'
-                      frozen: false
-                      functions: []
-                      id: 38878185
-                      name: Качество работы операторов
-      description: '### Список доступных шаблонов оценок'
-      security:
-        - Basic: []
-      operationId: ratingTemplates
-  '/calls/{call_id}':
-    parameters:
-      - type: string
-        name: call_id
-        in: path
-        required: true
-    get:
-      summary: Call
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  rating_details:
-                    type: object
-                    properties:
-                      '{template_id}':
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            grade:
-                              type: number
-                            limiting:
-                              type: boolean
-                            metric_label:
-                              type: string
-                            metric_name:
-                              type: string
-                            metric_value:
-                              type: number
-                  ratings:
-                    type:
-                      - string
-                      - object
-                    properties:
-                      '{template_id}':
-                        type: number
-                  transcript:
-                    type: array
-                    items:
-                      $ref: ./models/transcriptelement.v1.yaml
-                  client:
-                    type: string
-                  client_freezing:
-                    type: number
-                  client_freezing_count:
-                    type: number
-                  client_interjections_count:
-                    type: number
-                  client_interjections_count_abs:
-                    type: number
-                  client_interjections_duration:
-                    type: number
-                  client_longest_silence_duration:
-                    type: number
-                  client_longest_speech_duration:
-                    type: number
-                  client_silence_duration:
-                    type: number
-                  client_speech_duration:
-                    type: number
-                  date_of_call:
-                    type: number
-                  duration:
-                    type: number
-                  duration_answer:
-                    type: number
-                  hour_of_day:
-                    type: string
-                  id:
-                    type: integer
-                  interjections_count:
-                    type: integer
-                  interjections_count_abs:
-                    type: integer
-                  interjections_duration:
-                    type: number
-                  longest_interjection:
-                    type: number
-                  month_name:
-                    type: string
-                  operator:
-                    type: string
-                  operator_freezing:
-                    type: number
-                  operator_freezing_count:
-                    type: integer
-                  silence_duration:
-                    type: number
-                  silence_longest_duration:
-                    type: number
-                  speech_rate_client:
-                    type: number
-                  speech_rate_operator:
-                    type: number
-                  status:
-                    type: string
-                  telephony_id:
-                    type: string
-              examples:
-                example-1:
-                  value:
-                    client: '+79001720004'
-                    client_freezing: 0
-                    client_freezing_count: 0
-                    client_interjections_count: 1
-                    client_interjections_count_abs: 1
-                    client_interjections_duration: 3.42
-                    client_longest_silence_duration: 30
-                    client_longest_speech_duration: 7.5
-                    client_silence_duration: 230.25
-                    client_speech_duration: 192.51
-                    date_of_call: 1552087240
-                    day_of_week: '4'
-                    duration: 422.78
-                    duration_answer: 0
-                    hour_of_day: '15'
-                    id: 12078611
-                    interjections_count: 2
-                    interjections_count_abs: 2
-                    interjections_duration: 5.73
-                    longest_interjection: 3.42
-                    month_name: '05'
-                    operator: '101'
-                    operator_freezing: 0
-                    operator_freezing_count: 0
-                    rating_details:
-                      '22695205':
-                        - grade: 1
-                          limiting: true
-                          metric_label: E7D5DD05_Slova_parazity86481161
-                          metric_name: Слова паразиты
-                          metric_value: 36
-                        - grade: 4
-                          limiting: true
-                          metric_label: "5080B475_Nekompetentnost'_operatora35684599"
-                          metric_name: Некомпетентность оператора
-                          metric_value: 1
-                        - grade: 4
-                          limiting: false
-                          metric_label: operator_interjections_count_abs
-                          metric_name: Оператор перебил клиента
-                          metric_value: 1
-                        - grade: 4
-                          limiting: false
-                          metric_label: operator_speech_duration
-                          metric_name: Речь оператора
-                          metric_value: 161.4
-                        - grade: 5
-                          limiting: true
-                          metric_label: duration_answer
-                          metric_name: Время до снятия трубки
-                          metric_value: 0
-                      '91840530': []
-                    ratings:
-                      '22695205': 1
-                      '91840530': 2
-                    silence_duration: 99.42
-                    silence_longest_duration: 3.99
-                    speech_rate_client: 229.079008882655
-                    speech_rate_operator: 165.055762081784
-                    status: ACCEPTED
-                    telephony_id: '573360.123154143'
-                    transcript:
-                      - phrase: Алло.
-                        role: client
-                        timeBegin: 8.200000000000045
-                        timeEnd: 8.470000000000027
-                      - phrase: Алло добрый день ещё раз.
-                        role: operator
-                        timeBegin: 8.95
-                        timeEnd: 13.45
-                      - phrase: 'Да, здравствуйте.'
-                        role: client
-                        timeBegin: 11.580000000000041
-                        timeEnd: 16.410000000000025
-      description: "### Информация о звонке\n\nМетод позволяет получить разнообразную информацию о звонке, в том числе и информацию об оценках. Поле ratings - это словарь <ID шаблона оценок, усредненная оценка>, а поле rating_details позволяет получить оценку по каждой метрике, которая используется в шаблоне.\n\nТакже метод возвращает транскрибацию заонка в поле transcript\n\nДанный json содержит максимально полную информацию о звонке:\n\n- id\n- telephony_id - ID звонка из телефонии клиента\n- date_of_call - дата звонка\n- client, operator - номер клиента, оператора\n- ratings, rating_details - информация об оценках\n- transcript - транскрибация звонка (текст распознанного диалога)\n- а также параметры речевой активности и различные лексические (словарные) метрики\n\nЛексические метрики - это просто количество найденных фраз из определенного словаря, например: метрика 5080B475_Nekompetentnost'_operatora35684599 (Некомпетентность оператора) - это фразы: «не слышала ни разу», «мне нужно уточнить», «слышу впервые», «ранее не слышал», «не имею понятия», и т. п.\n\nПараметры речевой активности - это, например: operator_speech_duration (длительность речи оператора), interjections_count_abs (количество перебиваний), client_longest_silence_duration\t(максимальный участок молчания клиента) и т. д.\n\nПолный список параметров речевой активности: [https://www.notion.so/cee9287ca6934d75a0f9850e5c85d737](https://www.notion.so/cee9287ca6934d75a0f9850e5c85d737)\nМоменты, которые вызывают вопросы:\n\n1. Чем отличаются метрики с _abs и без?\nМетрики с суффиксом _abs созданы для внутренних целей, они в точности равны тем же метрикам но без этого суффикса.\n2. Как считается длительность перебивания? (interjections_duration)\nДорожка клиента и оператора накладываются друг на друга и считается суммарная длина отрезков, в которые попали оба голоса.\n3. Что такое freezing?\nЭто метрика залипания (считается, что «залип» клиент, если он молчал больше 7,5 секунд после речи оператора).\n4. Что такое speech_rate?\nЭто скорость речи, измеряется в словах в минуту.\n\nratings для каждого rating_template_id (Шаблона оценок) содержит усреднённую оценку по данному шаблону, а rating_details содержит для каждого rating_template_id список метрик с оценками, входящих в этот шаблон."
+      produces:
+        - application/json
       parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            description: Проверка аккаунта
+            properties:
+              id:
+                type: number
+              status:
+                type: string
+            type: object
+            x-examples:
+              account:
+                value:
+                  id: 100001
+                  status: VALID
       security:
         - Basic: []
-      operationId: callId
+      tags: []
+      description: '### Узнать текущий аккаунт'
+      operationId: account
+      summary: Get Account
+  /account/available_accounts:
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            items:
+              description: Доступные аккаунты
+              properties:
+                id:
+                  type: number
+                name:
+                  type: string
+              type: object
+              x-examples:
+                availableAccount:
+                  value:
+                    id: 100203
+                    name: Test Account
+            type: array
+      security:
+        - Basic: []
+      tags: []
+      description: '### Список доступных аккаунтов'
+      operationId: availableAccounts
+      summary: Available Accounts
+  '/account/change/{account_id}':
+    parameters:
+      - in: path
+        name: account_id
+        required: true
+        type: string
+    post:
+      parameters: []
+      responses:
+        '200':
+          description: OK
+      security:
+        - Basic: []
+      tags: []
+      description: '### Смена аккаунта (проекта)'
+      operationId: changeAccount
+      summary: Change Account(Project)
   /async_reports/generate_excel:
     post:
-      summary: Выгрузка отчетов
-      tags: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          type: string
+        - description: ''
+          in: body
+          name: body
+          schema:
+            properties:
+              date_from:
+                example: 1552942800
+                format: date-time
+                type: number
+              date_till:
+                example: 1552942800
+                format: date-time
+                type: number
+              dimensions:
+                items:
+                  type: string
+                type: array
+              metric_filters:
+                items:
+                  properties:
+                    label:
+                      type: string
+                    operator:
+                      type: string
+                    value:
+                      type: string
+                  type: object
+                type: array
+              metrics:
+                items:
+                  type: string
+                type: array
+              phrase_filters:
+                items:
+                  properties:
+                    label:
+                      type: string
+                    min_matches:
+                      type: number
+                    operator:
+                      type: string
+                    value:
+                      items:
+                        type: string
+                      type: array
+                    vocabulary_ids:
+                      items: {}
+                      type: array
+                  type: object
+                type: array
+              rating_template_id:
+                type: number
+              report_type:
+                description: csv or xlsx
+                type: string
+            type: object
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  task_id:
-                    type: string
-              examples:
-                example-1:
-                  value:
-                    task_id: 7890c68d-bc6b-445a-b4f0-293246d7f7a5
-      description: "### Выгрузка отчетов\n\n`metric_filters` и `phrase_filters` - фильтры в таком же формате как и на странице: \n\nНа этой же странцие описано как получить список метрик ( GET /api/v1/metrics/list). Из этого списка нужно взять требуемые labels и получить из них список metrics.\n\n`Dimensions` - в этот список могут попасть следующие строки:\n```\ntype - Входящие/исходящие/внутренние\noperatorTeam - Группы операторов\noperator - Операторы\nstatus - Приняты/не приняты\nhour_of_day - Часы\nday_of_week - Дни недели\nrating - Оценки\nweek - Недели\nmonth_name - Месяцы\ntranscript_status - Распознаны/не распознаны\n```\nДоступные `rating_template_id` можно получить из запроса *rating/templates*\n\nВернувшийся `task_id` нужно подставить в метод `async_reports/get_result/{task_id}` для получения результата выполнения операции\n"
+          schema:
+            properties:
+              task_id:
+                type: string
+            type: object
       security:
         - Basic: []
-      parameters:
-        - schema:
-            type: string
-          in: query
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                date_till:
-                  type: number
-                  format: date-time
-                  example: 1552942800
-                date_from:
-                  type: number
-                  format: date-time
-                  example: 1552942800
-                dimensions:
-                  type: array
-                  items:
-                    type: string
-                metrics:
-                  type: array
-                  items:
-                    type: string
-                metric_filters:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      value:
-                        type: string
-                      label:
-                        type: string
-                      operator:
-                        type: string
-                phrase_filters:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      operator:
-                        type: string
-                      value:
-                        type: array
-                        items:
-                          type: string
-                      label:
-                        type: string
-                      min_matches:
-                        type: number
-                      vocabulary_ids:
-                        type: array
-                        items: {}
-                rating_template_id:
-                  type: number
-                report_type:
-                  oneOf:
-                    - {}
-                  description: csv or xlsx
-                  type: string
-            examples:
-              example-1:
-                value:
-                  date_from: 1552942800
-                  date_till: 1555621199
-                  dimensions:
-                    - rating
-                  metrics:
-                    - date_of_call
-                    - quantity
-                    - duration
-                    - duration_answer
-                    - operator_interjections_count_abs
-                    - client_interjections_count_abs
-                    - rating
-                  metric_filters:
-                    - value: '0'
-                      label: duration
-                      operator: '>'
-                    - label: transcript_status
-                      operator: =
-                      value:
-                        - READY
-                  phrase_filters:
-                    - operator: operator_include
-                      value:
-                        - Отлично
-                        - Добрый день
-                      label: phrases
-                      min_matches: 1
-                      vocabulary_ids: []
-                  rating_template_id: 91840530
-                  report_type: xlsx
-        description: ''
+      tags: []
+      description: |
+        ### Выгрузка отчетов
+
+        `metric_filters` и `phrase_filters` - фильтры в таком же формате как и на странице:
+
+        На этой же странцие описано как получить список метрик ( GET /api/v1/metrics/list). Из этого списка нужно взять требуемые labels и получить из них список metrics.
+
+        `Dimensions` - в этот список могут попасть следующие строки:
+        ```
+        type - Входящие/исходящие/внутренние
+        operatorTeam - Группы операторов
+        operator - Операторы
+        status - Приняты/не приняты
+        hour_of_day - Часы
+        day_of_week - Дни недели
+        rating - Оценки
+        week - Недели
+        month_name - Месяцы
+        transcript_status - Распознаны/не распознаны
+        ```
+        Доступные `rating_template_id` можно получить из запроса *rating/templates*
+
+        Вернувшийся `task_id` нужно подставить в метод `async_reports/get_result/{task_id}` для получения результата выполнения операции
       operationId: generateExcel
+      summary: Выгрузка отчетов
   '/async_reports/get_result/{task_id}':
     parameters:
-      - type: string
+      - in: path
         name: task_id
-        in: path
         required: true
+        type: string
     get:
-      summary: Get task result
-      tags: []
+      produces:
+        - application/json
+      parameters: []
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: {}
-              examples:
-                example-1:
-                  value:
-                    error: null
-                    result:
-                      report_url: 'https://cloud.speechanalytics.ru/api/v1/downloads/report_673106_fd261acd-a6ca-43f7-a910-b3e85a89524b.xlsx'
-                    state: SUCCESS
-      description: "### Возвращает результат выполнения таски  \nЕсли задача выполнена, то state будет равен **\"SUCCESS\"**, если ещё выполняется или стоит в очереди то: **\"STARTED\"**, **\"PROGRESS\"** или **\"PENDING\"**.\n\nА в поле result будет ссылка на отчёт (на файл в формате csv или xlsx)."
+          schema:
+            properties: {}
+            type: object
       security:
         - Basic: []
-      operationId: getResult
-  '/calls/{call_id}/transcript_lite':
-    parameters:
-      - type: string
-        name: call_id
-        in: path
-        required: true
-    post:
-      summary: Выгрузка транскрибации
       tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  call_id:
-                    type: string
-                  transcript:
-                    type: array
-                    items:
-                      $ref: ./models/transcriptelement.v1.yaml
-              examples:
-                example-1:
-                  value:
-                    call_id: 1209014
-                    transcript:
-                      - phrase: Алло.
-                        role: client
-                        timeBegin: 6.082000000000001
-                        timeEnd: 6.5020000000000024
-                      - phrase: Добрый день.
-                        role: client
-                        timeBegin: 10.111999999999998
-                        timeEnd: 10.892
-                example-2:
-                  value:
-                    call_id: 1208956
-                    transcript: null
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-      security:
-        - Basic: []
       description: |-
-        ### Выгрузка транскрибации
+        ### Возвращает результат выполнения таски
+        Если задача выполнена, то state будет равен **"SUCCESS"**, если ещё выполняется или стоит в очереди то: **"STARTED"**, **"PROGRESS"** или **"PENDING"**.
 
-        Для пользования этим методом необходимо авторизоваться, то есть оба запроса (запрос авторизации и запрос выгрузки) должны быть в одной сессии.
-      operationId: transcriptLite
-  /calls/calls_period:
-    post:
-      summary: Список звонков
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  calls:
-                    type:
-                      - string
-                      - array
-                    items:
-                      type: object
-                      properties:
-                        account_id:
-                          type: integer
-                        date_of_call:
-                          type: integer
-                        duration:
-                          type: number
-                        id:
-                          type: integer
-                        telephony_id:
-                          type: string
-                        type:
-                          type: string
-                        phone_number_operator:
-                          type: string
-                        phone_number_client:
-                          type: string
-              examples:
-                example-1:
-                  value:
-                    calls:
-                      - account_id: 673106
-                        date_of_call: 1554888490
-                        duration: 1084.68
-                        id: 1209031
-                        telephony_id: '1554888490.1591474'
-                        type: INCOMING
-                        phone_number_operator: '102'
-                        phone_number_client: '+79160444381'
-          headers: {}
-      description: |-
-        **date_till** - начало временного промежутка (timestamp - целое число)
-        **date_from** - конец временного промежутка (timestamp - целое число)
-      security:
-        - Basic: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                date_till:
-                  type: integer
-                date_from:
-                  type: integer
-            examples:
-              example-1:
-                value:
-                  date_from: 1554880545
-                  date_till: 1554891345
-        description: "При том `telephony_id` - это идентификатор звонка из телефонии клиента, \nа `id` - идентификатор звонка нашей системы.\nЕсли `\"transcript_id\":null`, значит транскрибация для звонка отсутствует."
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Content-Type
-          description: ''
-          required: true
-      operationId: callsPeriod
+        А в поле result будет ссылка на отчёт (на файл в формате csv или xlsx).
+      operationId: getResult
+      summary: Get task result
   /async_search_phrases/find_matching_transcripts:
     post:
-      summary: Поиск по транскрибации
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  task_id:
-                    type: string
-              examples:
-                example-1:
-                  value:
-                    task_id: 2a49a969-e4fa-4d5a-8b98-e1cc1edb71f6
-      description: "date_till - начало временного промежутка поиска (timestamp - целое число)\ndate_from - конец временного промежутка поиска (timestamp - целое число)\nmetric_filters - количественные фильтры\nphrase_filters - фразовые фильтры\n### metric_filters\n\n`metric_filters` - это список объектов, каждый из которых содержит три поля: **value**, **label** и **operator**. \n\nПример `metric_filters`:\n```\n\"metric_filters\":[\n  {\n    \"value\":\"3\",\n    \"label\":\"interjections_count_abs\",\n    \"operator\":\"<\"\n  },\n  {\n    \"value\":[\"270\", \"210\"],\n    \"label\":\"operator\",\n    \"operator\":\"=\"\n  },\n  ...\n]\n```"
-      security:
-        - Basic: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                date_from:
-                  type: integer
-                date_till:
-                  type: integer
-                metric_filters:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      value:
-                        type: string
-                      label:
-                        type: string
-                      operator:
-                        type: string
-                phrase_filters:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      operator:
-                        type: string
-                      value:
-                        type: array
-                        items: {}
-                      label:
-                        type: string
-                      min_matches:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - description: 'Создается задача, возвращается task_id'
+          in: body
+          name: body
+          schema:
+            properties:
+              date_from:
+                type: integer
+              date_till:
+                type: integer
+              metric_filters:
+                items:
+                  properties:
+                    label:
+                      type: string
+                    operator:
+                      type: string
+                    value:
+                      type: string
+                  type: object
+                type: array
+              phrase_filters:
+                items:
+                  properties:
+                    label:
+                      type: string
+                    min_matches:
+                      type: integer
+                    operator:
+                      type: string
+                    value:
+                      items: {}
+                      type: array
+                    vocabulary_ids:
+                      items:
                         type: integer
-                      vocabulary_ids:
-                        type: array
-                        items:
-                          type: integer
-            examples:
-              example-1:
-                value:
-                  date_from: 1555153200
-                  date_till: 1555575755
-                  metric_filters:
-                    - value: '3'
-                      label: interjections_count_abs
-                      operator: <
-                    - value:
-                        - '270'
-                        - '210'
-                      label: operator
-                      operator: =
-                  phrase_filters:
-                    - operator: both_include
-                      value: []
-                      label: phrases
-                      min_matches: 2
-                      vocabulary_ids:
-                        - 425848
-                        - 179389
-                    - operator: operator_include
-                      value:
-                        - Отлично
-                        - Добрый день
-                      label: phrases
-                      min_matches: 1
-                      vocabulary_ids: []
-        description: 'Создается задача, возвращается task_id'
+                      type: array
+                  type: object
+                type: array
+            type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              task_id:
+                type: string
+            type: object
+      security:
+        - Basic: []
+      tags: []
+      description: |-
+        date_till - начало временного промежутка поиска (timestamp - целое число)
+        date_from - конец временного промежутка поиска (timestamp - целое число)
+        metric_filters - количественные фильтры
+        phrase_filters - фразовые фильтры
+        ### metric_filters
+
+        `metric_filters` - это список объектов, каждый из которых содержит три поля: **value**, **label** и **operator**.
+
+        Пример `metric_filters`:
+        ```
+        "metric_filters":[
+          {
+            "value":"3",
+            "label":"interjections_count_abs",
+            "operator":"<"
+          },
+          {
+            "value":["270", "210"],
+            "label":"operator",
+            "operator":"="
+          },
+          ...
+        ]
+        ```
       operationId: findTranscrib
-  /metrics/list:
-    get:
-      summary: Список возможных фильтров
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  metrics:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        aggregate:
-                          type: array
-                          items:
-                            type: string
-                        description:
-                          type: string
-                        filter:
-                          type: string
-                        is_lexical:
-                          type: boolean
-                        label:
-                          type: string
-                        name:
-                          type: string
-                        parent:
-                          type: string
-                        rateable:
-                          type: boolean
-                        relative:
-                          type: boolean
-                        show_plot:
-                          type: boolean
-                        show_tabl:
-                          type: boolean
-                        unit:
-                          type: string
-              examples:
-                example-1:
-                  value:
-                    metrics:
-                      - aggregate:
-                          - avg
-                          - max
-                        description: ''
-                        filter:
-                          choices: []
-                          type: range
-                        is_lexical: false
-                        label: client_interjections_count_abs
-                        name: Клиент перебил оператора
-                        parent: Параметры речевой активности
-                        rateable: true
-                        relative: false
-                        show_plot: true
-                        show_tabl: true
-                        unit: '1'
-      security:
-        - Basic: []
-      description: "Выбираем **label** из списка и конструируем объект `metric_filters`. Если `filter.type == range`, то в качестве значения поля **operator** можно выбрать только '**<**' или '**>**', а поля **value** - неотрицательные числа. А если `filter.type == multiselect`, то **operator** - только '**=**', **value** - подсписок списка `filter.choices`. В `metric_filters` можно использовать только не `is_lexical` метрики.\n\nТакже можно фильтровать по номеру клиента (`\"label\":\"client\"`) для этого искомые номера необходимо перечислить в списке **value**, а **operator** задать как '**=**'.\n\n### phrase_filters\n\n`phrase_filters` - список объектов со следующими полями:\n```\nlabel - всегда равен \"phrases\"\noperator - \"operator_include\", \"client_include\" или \"both_include\"- искать \nпо каналу оператора, клиента или по обоим каналам\nvalue - список искомых фраз\nmin_matches - минимальное количество совпадений (целое положительное число)\nvocabulary_ids - список id словарей, по которым будет производиться поиск\n```\nПример:\n```\n{\"phrase_filters\":[\n\t{\n          \"operator\":\"both_include\",\n          \"value\":[],\n          \"label\":\"phrases\",\n          \"min_matches\":2,\n          \"vocabulary_ids\":[425848,179389]\n        },\n        {\n          \"operator\":\"operator_include\",\n          \"value\":[\"Отлично\", \"Добрый день\"],\n          \"label\":\"phrases\",\n          \"min_matches\":1,\n          \"vocabulary_ids\":[]\n        }\n]}\n```\nВ примере в первом случае поиск будет производиться по двум словарям: \"Некомпетентность оператора\" и \"Оператор просит прощения\", в звонке должно найтись по крайней мере суммарно 2 слова из этих словарей. Во втором случае поиск будет только по каналу оператора, в звонках должна найтись хотя бы одна из фраз \"Отлично\" или \"Добрый день\". В результате работы метода будут звонки, которые нашлись одновременно и в первом и во втором случаях.\n"
-      operationId: metricList
-  /vocabularies:
-    get:
-      summary: Список доступных словарей
-      tags: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  vocabularies:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        description:
-                          type: string
-                        id:
-                          type: integer
-                        name:
-                          type: string
-                        role:
-                          type: string
-              examples:
-                example-1:
-                  value:
-                    vocabularies:
-                      - description: ''
-                        id: 425848
-                        name: Некомпетентность оператора
-                        role: operator
-                      - description: ''
-                        id: 179389
-                        name: Оператор просит прощения
-                        role: operator
-      security:
-        - Basic: []
-      description: словари
-      operationId: vocabularies
+      summary: Поиск по транскрибации
   '/async_search_phrases/get_result/{task_id}':
     parameters:
-      - type: string
+      - in: path
         name: task_id
-        in: path
         required: true
+        type: string
     get:
-      summary: Статус задачи по поиску
-      tags: []
+      produces:
+        - application/json
+      parameters: []
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type:
-                      - string
-                      - 'null'
-                  result:
-                    type: array
-                    items:
-                      type: integer
-                  state:
-                    type: string
-              examples:
-                example-1:
-                  value:
-                    error: null
-                    result:
-                      - 1443397
-                      - 1300102
-                      - 1209119
-                      - 1320500
-                    state: SUCCESS
+          schema:
+            properties:
+              error:
+                type:
+                  - string
+                  - 'null'
+              result:
+                items:
+                  type: integer
+                type: array
+              state:
+                type: string
+            type: object
+      tags: []
       description: |-
         Если задача выполнена, то state будет равен **"SUCCESS"**, если ещё выполняется или стоит в очереди то: **"STARTED"** или **"PENDING"**.
 
@@ -872,109 +326,466 @@ paths:
 
         Далее можно получить транскрибацию с размеченными вхождениями слов.
       operationId: getTaskResult
-  '/calls/{call_id}/transcript':
-    parameters:
-      - type: string
-        name: call_id
-        in: path
-        required: true
+      summary: Статус задачи по поиску
+  /auth/login:
     post:
-      summary: Транскрибация с разметкой
-      tags: []
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - description: ''
+          in: body
+          name: body
+          schema:
+            properties:
+              password:
+                type: string
+              username:
+                type: string
+            type: object
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  call_id:
-                    type: integer
-                  detailed_matches:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        matches:
-                          type: integer
-                        phrase:
-                          type: string
-                  highlights:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        matches:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              length:
-                                type: integer
-                              phrase:
-                                type: integer
-                              role:
-                                type: string
-                              symbol:
-                                type: integer
-                        search_phrase_id:
-                          type: integer
-                  matches:
-                    type: integer
-                  transcript:
-                    $ref: ./models/transcriptelement.v1.yaml
-              examples:
-                example-1:
-                  value:
-                    call_id: 1320500
-                    detailed_matches:
-                      - matches: 2
-                        phrase: отлично
-                      - matches: 1
-                        phrase: я не знаю
-                    highlights:
-                      - matches:
-                          - length: 9
-                            phrase: 3
-                            role: client
-                            symbol: 94
-                        search_phrase_id: 0
-                    matches: 4
-                    transcript:
-                      - phrase: Алло.
-                        role: client
-                        timeBegin: 6.082000000000001
-                        timeEnd: 6.5020000000000024
-                      - phrase: Добрый день.
-                        role: client
-                        timeBegin: 10.111999999999998
-                        timeEnd: 10.892
-      security:
-        - Basic: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: ./models/phrasefilter.v1.yaml
-            examples:
+          schema:
+            properties:
+              success:
+                type: boolean
+            type: object
+            x-examples:
               example-1:
                 value:
-                  phrase_filters:
-                    - operator: both_include
-                      value: []
-                      label: phrases
-                      min_matches: 2
-                      vocabulary_ids:
-                        - 425848
-                        - 179389
-        description: ''
-      description: "**detailed_matches** - список, сколько раз какое слово найдено\n\n**highlights** - размеченные вхождения. \n\nphrase - номер реплики (нумерация с 0)\n\nsymbol - номер первого символа вхождения\n\nlength - длина вхождения (в символах)\n\nrole - кто произнес реплику (\"client\" / \"operator\")\n\n**matches** - количество вхождений\n\n**transcript** - транскрибация звонка"
+                  success: true
+      tags:
+        - login
+      description: |-
+        В ответе есть директива **set-cookie** эту куку надо использовать во всех последующих запросах. |
+        Время жизни cookie - 1 год.
+      operationId: Login
+      summary: Login
+  /calls/calls_period:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: |-
+            При том `telephony_id` - это идентификатор звонка из телефонии клиента,
+            а `id` - идентификатор звонка нашей системы.
+            Если `"transcript_id":null`, значит транскрибация для звонка отсутствует.
+          in: body
+          name: body
+          schema:
+            properties:
+              date_from:
+                type: integer
+              date_till:
+                type: integer
+            type: object
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          schema:
+            properties:
+              calls:
+                items:
+                  properties:
+                    account_id:
+                      type: integer
+                    date_of_call:
+                      type: integer
+                    duration:
+                      type: number
+                    id:
+                      type: integer
+                    phone_number_client:
+                      type: string
+                    phone_number_operator:
+                      type: string
+                    telephony_id:
+                      type: string
+                    type:
+                      type: string
+                  type: object
+                type:
+                  - string
+                  - array
+            type: object
+      security:
+        - Basic: []
+      tags: []
+      description: |-
+        **date_till** - начало временного промежутка (timestamp - целое число)
+        **date_from** - конец временного промежутка (timestamp - целое число)
+      operationId: callsPeriod
+      summary: Список звонков
+  '/calls/{call_id}':
+    parameters:
+      - in: path
+        name: call_id
+        required: true
+        type: string
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              client:
+                type: string
+              client_freezing:
+                type: number
+              client_freezing_count:
+                type: number
+              client_interjections_count:
+                type: number
+              client_interjections_count_abs:
+                type: number
+              client_interjections_duration:
+                type: number
+              client_longest_silence_duration:
+                type: number
+              client_longest_speech_duration:
+                type: number
+              client_silence_duration:
+                type: number
+              client_speech_duration:
+                type: number
+              date_of_call:
+                type: number
+              duration:
+                type: number
+              duration_answer:
+                type: number
+              hour_of_day:
+                type: string
+              id:
+                type: integer
+              interjections_count:
+                type: integer
+              interjections_count_abs:
+                type: integer
+              interjections_duration:
+                type: number
+              longest_interjection:
+                type: number
+              month_name:
+                type: string
+              operator:
+                type: string
+              operator_freezing:
+                type: number
+              operator_freezing_count:
+                type: integer
+              rating_details:
+                properties:
+                  '{template_id}':
+                    items:
+                      properties:
+                        grade:
+                          schema:
+                            type: number
+                        limiting:
+                          schema:
+                            type: boolean
+                        metric_label:
+                          schema:
+                            type: string
+                        metric_name:
+                          schema:
+                            type: string
+                        metric_value:
+                          schema:
+                            type: number
+                      schema:
+                        type: object
+                    schema:
+                      type: array
+                schema:
+                  type: object
+              ratings:
+                properties:
+                  '{template_id}':
+                    type: number
+                schema:
+                  type:
+                    - string
+                    - object
+              silence_duration:
+                type: number
+              silence_longest_duration:
+                type: number
+              speech_rate_client:
+                type: number
+              speech_rate_operator:
+                type: number
+              status:
+                type: string
+              telephony_id:
+                type: string
+              transcript:
+                type: array
+            type: object
+      security:
+        - Basic: []
+      tags: []
+      description: "### Информация о звонке\n\nМетод позволяет получить разнообразную информацию о звонке, в том числе и информацию об оценках. Поле ratings - это словарь <ID шаблона оценок, усредненная оценка>, а поле rating_details позволяет получить оценку по каждой метрике, которая используется в шаблоне.\n\nТакже метод возвращает транскрибацию заонка в поле transcript\n\nДанный json содержит максимально полную информацию о звонке:\n\n- id\n- telephony_id - ID звонка из телефонии клиента\n- date_of_call - дата звонка\n- client, operator - номер клиента, оператора\n- ratings, rating_details - информация об оценках\n- transcript - транскрибация звонка (текст распознанного диалога)\n- а также параметры речевой активности и различные лексические (словарные) метрики\n\nЛексические метрики - это просто количество найденных фраз из определенного словаря, например: метрика 5080B475_Nekompetentnost'_operatora35684599 (Некомпетентность оператора) - это фразы: «не слышала ни разу», «мне нужно уточнить», «слышу впервые», «ранее не слышал», «не имею понятия», и т. п.\n\nПараметры речевой активности - это, например: operator_speech_duration (длительность речи оператора), interjections_count_abs (количество перебиваний), client_longest_silence_duration\t(максимальный участок молчания клиента) и т. д.\n\nПолный список параметров речевой активности: [https://www.notion.so/cee9287ca6934d75a0f9850e5c85d737](https://www.notion.so/cee9287ca6934d75a0f9850e5c85d737)\nМоменты, которые вызывают вопросы:\n\n1. Чем отличаются метрики с _abs и без?\nМетрики с суффиксом _abs созданы для внутренних целей, они в точности равны тем же метрикам но без этого суффикса.\n2. Как считается длительность перебивания? (interjections_duration)\nДорожка клиента и оператора накладываются друг на друга и считается суммарная длина отрезков, в которые попали оба голоса.\n3. Что такое freezing?\nЭто метрика залипания (считается, что «залип» клиент, если он молчал больше 7,5 секунд после речи оператора).\n4. Что такое speech_rate?\nЭто скорость речи, измеряется в словах в минуту.\n\nratings для каждого rating_template_id (Шаблона оценок) содержит усреднённую оценку по данному шаблону, а rating_details содержит для каждого rating_template_id список метрик с оценками, входящих в этот шаблон."
+      operationId: callId
+      summary: Call
+  '/calls/{call_id}/transcript':
+    parameters:
+      - in: path
+        name: call_id
+        required: true
+        type: string
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - description: ''
+          in: body
+          name: body
+          schema:
+            properties:
+              label:
+                type: string
+              min_matches:
+                type: integer
+              operator:
+                type: string
+              value:
+                items: {}
+                type: array
+              vocabulary_ids:
+                items:
+                  type: integer
+                type: array
+            type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              call_id:
+                type: integer
+              detailed_matches:
+                items:
+                  properties:
+                    matches:
+                      type: integer
+                    phrase:
+                      type: string
+                  type: object
+                type: array
+              highlights:
+                items:
+                  properties:
+                    matches:
+                      items:
+                        properties:
+                          length:
+                            type: integer
+                          phrase:
+                            type: integer
+                          role:
+                            type: string
+                          symbol:
+                            type: integer
+                        type: object
+                      type: array
+                    search_phrase_id:
+                      type: integer
+                  type: object
+                type: array
+              matches:
+                type: integer
+              transcript:
+                type: array
+            type: object
+      security:
+        - Basic: []
+      tags: []
+      description: |-
+        **detailed_matches** - список, сколько раз какое слово найдено
+
+        **highlights** - размеченные вхождения.
+
+        phrase - номер реплики (нумерация с 0)
+
+        symbol - номер первого символа вхождения
+
+        length - длина вхождения (в символах)
+
+        role - кто произнес реплику ("client" / "operator")
+
+        **matches** - количество вхождений
+
+        **transcript** - транскрибация звонка
       operationId: callTranscript
-components:
-  schemas: {}
-  securitySchemes:
-    Basic:
-      type: http
-      scheme: Basic
-      description: cookies and header
+      summary: Транскрибация с разметкой
+  '/calls/{call_id}/transcript_lite':
+    parameters:
+      - in: path
+        name: call_id
+        required: true
+        type: string
+    post:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              call_id:
+                type: string
+              transcript:
+                type: array
+            type: object
+        '404':
+          description: Not Found
+          schema:
+            properties:
+              error:
+                type: string
+            type: object
+      security:
+        - Basic: []
+      tags: []
+      description: |-
+        ### Выгрузка транскрибации
+
+        Для пользования этим методом необходимо авторизоваться, то есть оба запроса (запрос авторизации и запрос выгрузки) должны быть в одной сессии.
+      operationId: transcriptLite
+      summary: Выгрузка транскрибации
+  /metrics/list:
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              metrics:
+                items:
+                  properties:
+                    aggregate:
+                      items:
+                        type: string
+                      type: array
+                    description:
+                      type: string
+                    filter:
+                      type: string
+                    is_lexical:
+                      type: boolean
+                    label:
+                      type: string
+                    name:
+                      type: string
+                    parent:
+                      type: string
+                    rateable:
+                      type: boolean
+                    relative:
+                      type: boolean
+                    show_plot:
+                      type: boolean
+                    show_tabl:
+                      type: boolean
+                    unit:
+                      type: string
+                  type: object
+                type: array
+            type: object
+      security:
+        - Basic: []
+      tags: []
+      description: "Выбираем **label** из списка и конструируем объект `metric_filters`. Если `filter.type == range`, то в качестве значения поля **operator** можно выбрать только '**<**' или '**>**', а поля **value** - неотрицательные числа. А если `filter.type == multiselect`, то **operator** - только '**=**', **value** - подсписок списка `filter.choices`. В `metric_filters` можно использовать только не `is_lexical` метрики.\n\nТакже можно фильтровать по номеру клиента (`\"label\":\"client\"`) для этого искомые номера необходимо перечислить в списке **value**, а **operator** задать как '**=**'.\n\n### phrase_filters\n\n`phrase_filters` - список объектов со следующими полями:\n```\nlabel - всегда равен \"phrases\"\noperator - \"operator_include\", \"client_include\" или \"both_include\"- искать \nпо каналу оператора, клиента или по обоим каналам\nvalue - список искомых фраз\nmin_matches - минимальное количество совпадений (целое положительное число)\nvocabulary_ids - список id словарей, по которым будет производиться поиск\n```\nПример:\n```\n{\"phrase_filters\":[\n\t{\n          \"operator\":\"both_include\",\n          \"value\":[],\n          \"label\":\"phrases\",\n          \"min_matches\":2,\n          \"vocabulary_ids\":[425848,179389]\n        },\n        {\n          \"operator\":\"operator_include\",\n          \"value\":[\"Отлично\", \"Добрый день\"],\n          \"label\":\"phrases\",\n          \"min_matches\":1,\n          \"vocabulary_ids\":[]\n        }\n]}\n```\nВ примере в первом случае поиск будет производиться по двум словарям: \"Некомпетентность оператора\" и \"Оператор просит прощения\", в звонке должно найтись по крайней мере суммарно 2 слова из этих словарей. Во втором случае поиск будет только по каналу оператора, в звонках должна найтись хотя бы одна из фраз \"Отлично\" или \"Добрый день\". В результате работы метода будут звонки, которые нашлись одновременно и в первом и во втором случаях.\n"
+      operationId: metricList
+      summary: Список возможных фильтров
+  /rating/templates:
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            items:
+              properties:
+                decription:
+                  type: string
+                frozen:
+                  type: boolean
+                functions:
+                  items: {}
+                  type: array
+                id:
+                  type: number
+                name:
+                  type: string
+              type: object
+            type: array
+      security:
+        - Basic: []
+      tags: []
+      description: '### Список доступных шаблонов оценок'
+      operationId: ratingTemplates
+      summary: Список доступных шаблонов оценок
+  /vocabularies:
+    get:
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              vocabularies:
+                items:
+                  properties:
+                    description:
+                      type: string
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    role:
+                      type: string
+                  type: object
+                type: array
+            type: object
+      security:
+        - Basic: []
+      tags: []
+      description: словари
+      operationId: vocabularies
+      summary: Список доступных словарей
+definitions: {}
+securityDefinitions:
+  Basic:
+    description: cookies and header
+    scheme: Basic
+    type: http
+x-components: {}
+host: 'https://cloud.speechanalytics.ru/'
+basePath: api/v1

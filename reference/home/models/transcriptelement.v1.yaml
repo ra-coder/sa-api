@@ -1,0 +1,20 @@
+title: TranscriptElement
+x-examples:
+  example-1:
+    value:
+      phrase: Добрый день.
+      role: client
+      timeBegin: 10.111999999999998
+      timeEnd: 10.892
+type:
+  - object
+  - 'null'
+properties:
+  phrase:
+    type: string
+  role:
+    type: string
+  timeBegin:
+    type: number
+  timeEnd:
+    type: number

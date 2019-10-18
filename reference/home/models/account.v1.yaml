@@ -1,0 +1,13 @@
+title: Account
+type: object
+x-examples:
+  account:
+    value:
+      id: 100001
+      status: VALID
+description: Проверка аккаунта
+properties:
+  id:
+    type: number
+  status:
+    type: string

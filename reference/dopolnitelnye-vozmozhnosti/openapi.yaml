@@ -1,0 +1,10 @@
+openapi: 3.0.0
+info:
+  title: Дополнительные возможности
+  version: '1.0'
+  description: "## Получить ссылку на звонок, зная ID звонка из телефонии\n\nИспользуйте ссылку следующего формата: \n\n[https://cloud.speechanalytics.ru/calls?telephony_id=](https://cloud.speechanalytics.ru/calls?telephony_id=1565017231.81040)[<Telephony_ID>](https://cloud.speechanalytics.ru/calls?telephony_id=<Telephony_ID>)"
+servers:
+  - url: 'http://localhost:3000'
+paths: {}
+components:
+  schemas: {}

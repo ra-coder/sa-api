@@ -1,0 +1,16 @@
+title: PhraseFilter
+type: object
+properties:
+  operator:
+    type: string
+  value:
+    type: array
+    items: {}
+  label:
+    type: string
+  min_matches:
+    type: integer
+  vocabulary_ids:
+    type: array
+    items:
+      type: integer

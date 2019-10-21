@@ -345,6 +345,9 @@ paths:
               username:
                 type: string
             type: object
+        - type: string
+          in: header
+          name: Autorisation
       responses:
         '200':
           description: OK
@@ -895,7 +898,7 @@ securityDefinitions:
     description: Значение куки sessionid
 x-components: {}
 basePath: /api/v1
-host: integration2.speech.one
+host: '{server}'
 produces:
   - application/json
 consumes:

@@ -38,11 +38,11 @@ paths:
                 value:
                   id: 100001
                   status: VALID
-      tags: [Аккаунт]
+      tags:
+        - Аккаунт
       description: '### Узнать текущий аккаунт'
       operationId: account
       summary: Get Account
-
   /account/available_accounts:
     get:
       produces:
@@ -75,7 +75,8 @@ paths:
                     id: 100203
                     name: Test Account
             type: array
-      tags: [Аккаунт]
+      tags:
+        - Аккаунт
       description: '### Список доступных аккаунтов'
       operationId: availableAccounts
       summary: Available Accounts
@@ -99,7 +100,8 @@ paths:
       responses:
         '200':
           description: OK
-      tags: [Аккаунт]
+      tags:
+        - Аккаунт
       description: '### Смена аккаунта (проекта)'
       operationId: changeAccount
       summary: Change Account(Project)
@@ -432,7 +434,8 @@ paths:
                   - string
                   - array
             type: object
-      tags: []
+      tags:
+        - Звонок
       description: |-
         **date_till** - начало временного промежутка (timestamp - целое число)
         **date_from** - конец временного промежутка (timestamp - целое число)
@@ -457,13 +460,14 @@ paths:
           name: Cookie
           required: true
           description: session_id cookie
-      tags: []
       description: "### Информация о звонке\n\nМетод позволяет получить разнообразную информацию о звонке, в том числе и информацию об оценках. Поле ratings - это словарь <ID шаблона оценок, усредненная оценка>, а поле rating_details позволяет получить оценку по каждой метрике, которая используется в шаблоне.\n\nТакже метод возвращает транскрибацию заонка в поле transcript\n\nДанный json содержит максимально полную информацию о звонке:\n\n- id\n- telephony_id - ID звонка из телефонии клиента\n- date_of_call - дата звонка\n- client, operator - номер клиента, оператора\n- ratings, rating_details - информация об оценках\n- transcript - транскрибация звонка (текст распознанного диалога)\n- а также параметры речевой активности и различные лексические (словарные) метрики\n\nЛексические метрики - это просто количество найденных фраз из определенного словаря, например: метрика 5080B475_Nekompetentnost'_operatora35684599 (Некомпетентность оператора) - это фразы: «не слышала ни разу», «мне нужно уточнить», «слышу впервые», «ранее не слышал», «не имею понятия», и т. п.\n\nПараметры речевой активности - это, например: operator_speech_duration (длительность речи оператора), interjections_count_abs (количество перебиваний), client_longest_silence_duration\t(максимальный участок молчания клиента) и т. д.\n\nПолный список параметров речевой активности: [https://www.notion.so/cee9287ca6934d75a0f9850e5c85d737](https://www.notion.so/cee9287ca6934d75a0f9850e5c85d737)\nМоменты, которые вызывают вопросы:\n\n1. Чем отличаются метрики с _abs и без?\nМетрики с суффиксом _abs созданы для внутренних целей, они в точности равны тем же метрикам но без этого суффикса.\n2. Как считается длительность перебивания? (interjections_duration)\nДорожка клиента и оператора накладываются друг на друга и считается суммарная длина отрезков, в которые попали оба голоса.\n3. Что такое freezing?\nЭто метрика залипания (считается, что «залип» клиент, если он молчал больше 7,5 секунд после речи оператора).\n4. Что такое speech_rate?\nЭто скорость речи, измеряется в словах в минуту.\n\nratings для каждого rating_template_id (Шаблона оценок) содержит усреднённую оценку по данному шаблону, а rating_details содержит для каждого rating_template_id список метрик с оценками, входящих в этот шаблон."
       operationId: callId
       summary: Call
       responses:
         '200':
           description: OK
+      tags:
+        - Звонок
   '/calls/{call_id}/transcript':
     parameters:
       - in: path

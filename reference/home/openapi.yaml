@@ -885,11 +885,6 @@ paths:
           in: header
           name: Authorization
           description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
         - description: ''
           in: body
           name: body
@@ -919,6 +914,48 @@ paths:
         Время жизни cookie - 1 год.
       operationId: Login
       summary: Login
+  '/account/{account_id}/groups':
+    parameters:
+      - type: integer
+        name: account_id
+        in: path
+        required: true
+    get:
+      summary: Группы операторов
+      tags:
+        - Операторы
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              groups:
+                type: array
+                items:
+                  $ref: ../common/models/operatogroup.v1.yaml
+          examples:
+            Пример:
+              groups:
+                - id: 463
+                  name: Продажи
+                - id: 464
+                  name: (Без группы)
+                  default: true
+                - id: 500
+                  name: Prodaji
+                  telephony: true
+      description: Список групп операторов у аккаунта
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
 definitions: {}
 securityDefinitions: {}
 x-components: {}

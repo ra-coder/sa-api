@@ -12,7 +12,16 @@ paths:
     get:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -29,17 +38,25 @@ paths:
                 value:
                   id: 100001
                   status: VALID
-      security:
-        - Basic: []
-      tags: []
+      tags: [Аккаунт]
       description: '### Узнать текущий аккаунт'
       operationId: account
       summary: Get Account
+
   /account/available_accounts:
     get:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -58,9 +75,7 @@ paths:
                     id: 100203
                     name: Test Account
             type: array
-      security:
-        - Basic: []
-      tags: []
+      tags: [Аккаунт]
       description: '### Список доступных аккаунтов'
       operationId: availableAccounts
       summary: Available Accounts
@@ -71,13 +86,20 @@ paths:
         required: true
         type: string
     post:
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
-      security:
-        - Basic: []
-      tags: []
+      tags: [Аккаунт]
       description: '### Смена аккаунта (проекта)'
       operationId: changeAccount
       summary: Change Account(Project)
@@ -88,8 +110,15 @@ paths:
       produces:
         - application/json
       parameters:
-        - in: query
-          type: string
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
         - description: ''
           in: body
           name: body
@@ -154,8 +183,6 @@ paths:
               task_id:
                 type: string
             type: object
-      security:
-        - Basic: []
       tags: []
       description: |
         ### Выгрузка отчетов
@@ -191,15 +218,22 @@ paths:
     get:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
           schema:
             properties: {}
             type: object
-      security:
-        - Basic: []
       tags: []
       description: |-
         ### Возвращает результат выполнения таски
@@ -215,6 +249,15 @@ paths:
       produces:
         - application/json
       parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
         - description: 'Создается задача, возвращается task_id'
           in: body
           name: body
@@ -262,8 +305,6 @@ paths:
               task_id:
                 type: string
             type: object
-      security:
-        - Basic: []
       tags: []
       description: |-
         date_till - начало временного промежутка поиска (timestamp - целое число)
@@ -301,7 +342,16 @@ paths:
     get:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -327,43 +377,6 @@ paths:
         Далее можно получить транскрибацию с размеченными вхождениями слов.
       operationId: getTaskResult
       summary: Статус задачи по поиску
-  /auth/login:
-    post:
-      consumes:
-        - application/json
-        - application/xml
-      produces:
-        - application/json
-      parameters:
-        - description: ''
-          in: body
-          name: body
-          schema:
-            properties:
-              password:
-                type: string
-              username:
-                type: string
-            type: object
-      responses:
-        '200':
-          description: OK
-          schema:
-            properties:
-              success:
-                type: boolean
-            type: object
-            x-examples:
-              example-1:
-                value:
-                  success: true
-      tags:
-        - login
-      description: |-
-        В ответе есть директива **set-cookie** эту куку надо использовать во всех последующих запросах. |
-        Время жизни cookie - 1 год.
-      operationId: Login
-      summary: Login
   /calls/calls_period:
     post:
       consumes:
@@ -419,8 +432,6 @@ paths:
                   - string
                   - array
             type: object
-      security:
-        - Basic: []
       tags: []
       description: |-
         **date_till** - начало временного промежутка (timestamp - целое число)
@@ -436,113 +447,23 @@ paths:
     get:
       produces:
         - application/json
-      parameters: []
-      responses:
-        '200':
-          description: OK
-          schema:
-            properties:
-              client:
-                type: string
-              client_freezing:
-                type: number
-              client_freezing_count:
-                type: number
-              client_interjections_count:
-                type: number
-              client_interjections_count_abs:
-                type: number
-              client_interjections_duration:
-                type: number
-              client_longest_silence_duration:
-                type: number
-              client_longest_speech_duration:
-                type: number
-              client_silence_duration:
-                type: number
-              client_speech_duration:
-                type: number
-              date_of_call:
-                type: number
-              duration:
-                type: number
-              duration_answer:
-                type: number
-              hour_of_day:
-                type: string
-              id:
-                type: integer
-              interjections_count:
-                type: integer
-              interjections_count_abs:
-                type: integer
-              interjections_duration:
-                type: number
-              longest_interjection:
-                type: number
-              month_name:
-                type: string
-              operator:
-                type: string
-              operator_freezing:
-                type: number
-              operator_freezing_count:
-                type: integer
-              rating_details:
-                properties:
-                  '{template_id}':
-                    items:
-                      properties:
-                        grade:
-                          schema:
-                            type: number
-                        limiting:
-                          schema:
-                            type: boolean
-                        metric_label:
-                          schema:
-                            type: string
-                        metric_name:
-                          schema:
-                            type: string
-                        metric_value:
-                          schema:
-                            type: number
-                      schema:
-                        type: object
-                    schema:
-                      type: array
-                schema:
-                  type: object
-              ratings:
-                properties:
-                  '{template_id}':
-                    type: number
-                schema:
-                  type:
-                    - string
-                    - object
-              silence_duration:
-                type: number
-              silence_longest_duration:
-                type: number
-              speech_rate_client:
-                type: number
-              speech_rate_operator:
-                type: number
-              status:
-                type: string
-              telephony_id:
-                type: string
-              transcript:
-                type: array
-            type: object
-      security:
-        - Basic: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       tags: []
       description: "### Информация о звонке\n\nМетод позволяет получить разнообразную информацию о звонке, в том числе и информацию об оценках. Поле ratings - это словарь <ID шаблона оценок, усредненная оценка>, а поле rating_details позволяет получить оценку по каждой метрике, которая используется в шаблоне.\n\nТакже метод возвращает транскрибацию заонка в поле transcript\n\nДанный json содержит максимально полную информацию о звонке:\n\n- id\n- telephony_id - ID звонка из телефонии клиента\n- date_of_call - дата звонка\n- client, operator - номер клиента, оператора\n- ratings, rating_details - информация об оценках\n- transcript - транскрибация звонка (текст распознанного диалога)\n- а также параметры речевой активности и различные лексические (словарные) метрики\n\nЛексические метрики - это просто количество найденных фраз из определенного словаря, например: метрика 5080B475_Nekompetentnost'_operatora35684599 (Некомпетентность оператора) - это фразы: «не слышала ни разу», «мне нужно уточнить», «слышу впервые», «ранее не слышал», «не имею понятия», и т. п.\n\nПараметры речевой активности - это, например: operator_speech_duration (длительность речи оператора), interjections_count_abs (количество перебиваний), client_longest_silence_duration\t(максимальный участок молчания клиента) и т. д.\n\nПолный список параметров речевой активности: [https://www.notion.so/cee9287ca6934d75a0f9850e5c85d737](https://www.notion.so/cee9287ca6934d75a0f9850e5c85d737)\nМоменты, которые вызывают вопросы:\n\n1. Чем отличаются метрики с _abs и без?\nМетрики с суффиксом _abs созданы для внутренних целей, они в точности равны тем же метрикам но без этого суффикса.\n2. Как считается длительность перебивания? (interjections_duration)\nДорожка клиента и оператора накладываются друг на друга и считается суммарная длина отрезков, в которые попали оба голоса.\n3. Что такое freezing?\nЭто метрика залипания (считается, что «залип» клиент, если он молчал больше 7,5 секунд после речи оператора).\n4. Что такое speech_rate?\nЭто скорость речи, измеряется в словах в минуту.\n\nratings для каждого rating_template_id (Шаблона оценок) содержит усреднённую оценку по данному шаблону, а rating_details содержит для каждого rating_template_id список метрик с оценками, входящих в этот шаблон."
       operationId: callId
       summary: Call
+      responses:
+        '200':
+          description: OK
   '/calls/{call_id}/transcript':
     parameters:
       - in: path
@@ -555,6 +476,15 @@ paths:
       produces:
         - application/json
       parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
         - description: ''
           in: body
           name: body
@@ -615,8 +545,6 @@ paths:
               transcript:
                 type: array
             type: object
-      security:
-        - Basic: []
       tags: []
       description: |-
         **detailed_matches** - список, сколько раз какое слово найдено
@@ -645,7 +573,16 @@ paths:
     post:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -663,8 +600,6 @@ paths:
               error:
                 type: string
             type: object
-      security:
-        - Basic: []
       tags: []
       description: |-
         ### Выгрузка транскрибации
@@ -676,7 +611,16 @@ paths:
     get:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -714,8 +658,6 @@ paths:
                   type: object
                 type: array
             type: object
-      security:
-        - Basic: []
       tags: []
       description: "Выбираем **label** из списка и конструируем объект `metric_filters`. Если `filter.type == range`, то в качестве значения поля **operator** можно выбрать только '**<**' или '**>**', а поля **value** - неотрицательные числа. А если `filter.type == multiselect`, то **operator** - только '**=**', **value** - подсписок списка `filter.choices`. В `metric_filters` можно использовать только не `is_lexical` метрики.\n\nТакже можно фильтровать по номеру клиента (`\"label\":\"client\"`) для этого искомые номера необходимо перечислить в списке **value**, а **operator** задать как '**=**'.\n\n### phrase_filters\n\n`phrase_filters` - список объектов со следующими полями:\n```\nlabel - всегда равен \"phrases\"\noperator - \"operator_include\", \"client_include\" или \"both_include\"- искать \nпо каналу оператора, клиента или по обоим каналам\nvalue - список искомых фраз\nmin_matches - минимальное количество совпадений (целое положительное число)\nvocabulary_ids - список id словарей, по которым будет производиться поиск\n```\nПример:\n```\n{\"phrase_filters\":[\n\t{\n          \"operator\":\"both_include\",\n          \"value\":[],\n          \"label\":\"phrases\",\n          \"min_matches\":2,\n          \"vocabulary_ids\":[425848,179389]\n        },\n        {\n          \"operator\":\"operator_include\",\n          \"value\":[\"Отлично\", \"Добрый день\"],\n          \"label\":\"phrases\",\n          \"min_matches\":1,\n          \"vocabulary_ids\":[]\n        }\n]}\n```\nВ примере в первом случае поиск будет производиться по двум словарям: \"Некомпетентность оператора\" и \"Оператор просит прощения\", в звонке должно найтись по крайней мере суммарно 2 слова из этих словарей. Во втором случае поиск будет только по каналу оператора, в звонках должна найтись хотя бы одна из фраз \"Отлично\" или \"Добрый день\". В результате работы метода будут звонки, которые нашлись одновременно и в первом и во втором случаях.\n"
       operationId: metricList
@@ -724,7 +666,16 @@ paths:
     get:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -744,8 +695,6 @@ paths:
                   type: string
               type: object
             type: array
-      security:
-        - Basic: []
       tags: []
       description: '### Список доступных шаблонов оценок'
       operationId: ratingTemplates
@@ -754,7 +703,16 @@ paths:
     get:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -774,8 +732,6 @@ paths:
                   type: object
                 type: array
             type: object
-      security:
-        - Basic: []
       tags: []
       description: словари
       operationId: vocabularies
@@ -784,7 +740,16 @@ paths:
     post:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -804,10 +769,9 @@ paths:
                   type: object
                 type: array
             type: object
-      security:
-        - Basic: []
       summary: Список подписок на триггеры
       operationId: triggerList
+      description: Создание подписки на триггер
   '/reports/trigger/{trigger_id}/delete':
     parameters:
       - in: path
@@ -815,7 +779,16 @@ paths:
         required: true
         type: string
     post:
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -830,6 +803,15 @@ paths:
       consumes:
         - application/json
       parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
         - in: body
           name: body
           schema:
@@ -839,11 +821,6 @@ paths:
               report_id:
                 type: integer
             type: object
-      responses:
-        '200':
-          description: OK
-      security:
-        - Basic: []
       description: |-
         Метод принимает json-объект с параметрами:
         ```
@@ -852,44 +829,94 @@ paths:
         ```
       summary: Подписка на триггеры
       operationId: triggerSubscription
+      responses:
+        '200':
+          description: OK
   /reports:
     get:
       produces:
         - application/json
-      parameters: []
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
           schema:
             properties: {}
             type: object
-      tags: []
+      tags:
+        - Отчеты
       summary: Отчеты
       description: "Это API позволяет получать информацию по избранным звонкам: как только\n    приходит новый звонок, удовлетворяющий фильтрам отчета, система отправляет\n    информацию по звонку на указанный сервер.\n\n\n    ### Схема работы с API:\n\n\n    1. Получить список отчетов через метод `/reports`\n\n    2. Выбрать нужные отчеты и создать по ним триггеры с помощью метода\n    `/reports/trigger`, указав при этом номер отчета и url-адрес, на который\n    будут отправляться POST-запросы с данными о звонках.\n\n    3. Принимать и обрабатывать сообщения со звонками.\n\n\n    ## Специальные триггеры\n\n\n    Можно использовать готовые интеграции на основе триггеров со сторонними\n    системами. \n\n    Для этого надо указать \"специальный\" endpoint_url для подписки на триггеры.\n\n\n    ### MarketingHub\n\n\n    Для [marketinghub.ru](http://marketinghub.ru/) можно настроить экспорт\n    телефонных номеров клиентов из звонков, попавших в отчет в аудиторию для\n    последующего таргетинга рекламы.\n\n    В качестве endpoint_url надо указать урл вида marketinghub://<access_token>\n\n\n    ### Usedesk\n\n\n    Для [usedesk.ru](http://usedesk.ru/) можно настроить пересылку транскрибаций\n    звонков, попавших в отчет. В качестве endpoint_url надо указать урл вида\n    usedesk://<api_token>@api.usedesk.ru/\n\n\n    ## Обработка сообщений\n\n\n    Endpoint указанный в запросе должен принимать на вход json со следующими\n    полями:\n\n        report_id - id отчёта\n        calls - список звонков, где каждый звонок - это объект со следующими полями:\n        \n        id - внутренний id звонка Speech Analytics\n        telephony_id - id звонка из телефонии\n        date_of_call - дата звонка\n        phone_number_client - номер клиента\n        phone_number_operator - номер оператора\n        operator_name - имя оператора\n        transcript - транскрибация звонка (текст распознанного диалога)\n\n    Пример:\n\n        {\n           \"report_id\":12345678,\n           \"calls\":[\n              {\n                 \"id\":1482470,\n                 \"telephony_id\":\"1557839653.1800447\",\n                 \"date_of_call\":1557839654,\n                 \"phone_number_client\":\"+79261708580\",\n                 \"phone_number_operator\":\"270\",\n                 \"transcript\":[...]\n              },\n              {\n                 \"id\":1481981,\n                 \"telephony_id\":\"1557829764.1796966\",\n                 \"date_of_call\":1557829764,\n                 \"phone_number_client\":\"+79261708580\",\n                 \"phone_number_operator\":\"270\",\n                 \"transcript\":[\n                       {\n                          \"phrase\":\"Добрый день\",\n                          \"timeEnd\":0.5100000000000051,\n                          \"timeBegin\":0.2700000000000031,\n                          \"role\":\"client\"\n                       },\n                       {\n                          \"phrase\":\"Здравствуйте\",\n                          \"timeEnd\":4.1,\n                          \"timeBegin\":1.46,\n                          \"role\":\"operator\"\n                       },\n                       {\n                          \"phrase\":\"Через час перезвоните, пожалуйста.\",\n                          \"timeEnd\":10.890000000000008,\n                          \"timeBegin\":5.190000000000005,\n                          \"role\":\"client\"\n                       },\n                       {\n                          \"phrase\":\"Так через час\",\n                          \"timeEnd\":13.860000000000001,\n                          \"timeBegin\":11.55,\n                          \"role\":\"operator\"\n                       },\n                       ...\n                  ],\n              },\n              ...\n           ]\n        }\n\n    Ответ на запрос тоже должен быть в json-формате, ожидается следующий ответ:\n\n        {\"success\": true}\n\n    Подробную информацию о звонке можно получить с помощью GET-запроса\n    `/api/v1/calls/{id звонка}`\n\n\n    # Примеры триггеров:\n\n\n    ### **Пример 1. Молниеносное оповещение о технических проблемах на сайте\n    компании.**\n\n\n    Клиент зашел на сайт компании, перешел на страницу ЖК, но не смог записаться\n    на демонстрацию объекта. Он позвонил по указанному на сайте телефонному\n    номеру и сообщил, что «**`На сайте проблема, я не смог записаться на\n    демонстрацию`**» и попросил записать его по телефону. \n\n    **Действие:** Через 5 минут этот звонок попал в отчет \"`**Проблемы на\n    сайте**`\" по фразе клиента из звонка \"`**на сайте проблема**`\". Мы сразу же\n    по данному событию отправили IT-специалисту письмо либо создали тикет в\n    поддержке с задачей проверить информацию из звонка клиента. Включили в тикет\n    название отчета, номер клиента, дату звонка, ссылку на запись звонка,\n    транскрибацию диалога.\n\n\n    ### **Пример 2. Маркетинговые активности на основе того, что говорит ваш\n    клиент.**\n\n\n    Клиент позвонил застройщику и уточнил какие варианты квартир есть в \"`**ЖК\n    Дикий Запад**`\", также сказал, что обязательно нужен \"**`подземный\n    паркинг`**\". Менеджер дал всю необходимую информацию и клиент пошел думать. \n\n    **Действие:** Этот звонок через 5 минут попал в отчеты «`**ЖК Дикий\n    Запад**`» и «**`Подземный паркинг`**» по произнесенным клиентом ключевым\n    словам. По данному событию мы тут же передали телефон клиента в аудитории\n    рекламной площадки Facebook Ads. Одна аудитория используются в связке с\n    креативами где мы продаем ЖК Дикий Запад, а вторая демонстрирует, что можно\n    получить скидку на паркинг 50% при оплате квартиры и паркинга до конца\n    месяца. Таким образом мы моментально подогреваем клиента для продажи.\n\n\n    ### **Пример 3. Как узнать об ошибке менеджера и спасти сделку с клиентом за\n    5 минут.**\n\n\n    На финальной стадии сделки клиент позвонил менеджеру и спросил \"`**Почему в\n    договоре отсутствует обещанная скидка**`\". Менеджер сказал, что скидки\n    больше не действуют. Клиент очень расстроился и отказался от сделки. \n\n    **Действие:** Этот звонок через 5 минут попал в отчет \"**`Невыполненные\n    обещания`**\" и тут же отправилось письмо и смс руководителю отдела продаж с\n    детальной информацией в том числе, кто был менеджер. Руководитель отдела\n    связался с менеджером, дальше с клиентом и вернул сделку."
       operationId: reports
-  '/calls/{telephony_id}':
-    parameters:
-      - type: string
-        name: telephony_id
-        in: path
-        required: true
+  /calls:
     get:
-      summary: getCallByTelephonyId
-      tags: []
-      responses: {}
+      parameters:
+        - type: string
+          in: query
+          name: telephony_id
+          description: id звонка из телефонии
       description: ''
-      parameters: []
+      responses:
+        '200':
+          description: OK
+    parameters: []
+  /auth/login:
+    post:
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+        - description: ''
+          in: body
+          name: body
+          schema:
+            properties:
+              password:
+                type: string
+              username:
+                type: string
+            type: object
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              success:
+                type: boolean
+            type: object
+            x-examples:
+              example-1:
+                value:
+                  success: true
+      tags:
+        - Авторизация
+      description: |-
+        В ответе есть директива **set-cookie** эту куку надо использовать во всех последующих запросах. |
+        Время жизни cookie - 1 год.
+      operationId: Login
+      summary: Login
 definitions: {}
-securityDefinitions:
-  Basic:
-    description: cookies and header
-    scheme: Basic
-    type: http
-  sessionid:
-    name: sessionid
-    type: apiKey
-    in: cookie
-    description: Значение куки sessionid
+securityDefinitions: {}
 x-components: {}
 host: cloud.speechanalytics.ru
 basePath: /api/v1

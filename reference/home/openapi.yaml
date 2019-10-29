@@ -956,6 +956,170 @@ paths:
           name: Cookie
           required: true
           description: session_id cookie
+  '/project/{project_id}/users':
+    post:
+      summary: Добавление/удаление пользователей в проекте
+      tags:
+        - ACL
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            Пример ответа:
+              users:
+                - username: ra@speech.one
+                  first_name: Александр
+                  last_name: ''
+                  acl:
+                    billing: write
+                    info: write
+                    acl: write
+                    operators: write
+                    integration: write
+                    new_reports: write
+                    new_templates: write
+                - username: aa@speech.one
+                  first_name: Алексей
+                  last_name: К
+                  acl:
+                    billing: read
+                    info: write
+                    new_reports: read
+                    new_templates: read
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties: {}
+          x-examples:
+            Пример запроса:
+              users:
+                - username: aa@speech.one
+                  acl:
+                    billing: read
+                    info: write
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties: {}
+          x-examples:
+            example-1: {}
+    get:
+      summary: Пользователи с доступом к проекту
+      tags:
+        - ACL
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            Пример:
+              users:
+                - username: ra@speech.one
+                  first_name: Александр
+                  last_name: ''
+                  acl:
+                    role: supervisor
+                    billing: write
+                    info: write
+                    acl: write
+                    operators: write
+                    integration: write
+                    new_reports: write
+                    new_templates: write
+                - username: aa@speech.one
+                  first_name: Алексей
+                  last_name: К
+                  acl:
+                    role: analyst
+                    billing: read
+                    info: write
+                    new_reports: read
+                    new_templates: read
+                - username: demo@speech.one
+                  first_name: demo
+                  last_name: ''
+                  acl:
+                    role: demo
+      description: ''
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+  '/project/{project_id}/acl':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Права доступа к отчетам и шаблонам
+      tags:
+        - ACL
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            Пример:
+              templates:
+                - id: 100500
+                  name: 100 бальный продажи
+                  users:
+                    ra@speech.one: write
+                    ak@speech.one: read
+              reports:
+                - id: 100300
+                  name: Продажи
+                  users:
+                    ra@speech.one: write
+                    ak@speech.one: read
+    post:
+      summary: 'Управление правами доступа к  отчетам и шаблонам '
+      tags:
+        - ACL
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties: {}
+          x-examples:
+            Пример:
+              templates:
+                - id: 100500
+                  name: 100 бальный продажи
+                  users:
+                    ra@speech.one: write
+                    ak@speech.one: write
+              reports:
+                - id: 100300
+                  name: Продажи
+                  users:
+                    ra@speech.one: write
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties: {}
+          x-examples:
+            example-1: {}
 definitions: {}
 securityDefinitions: {}
 x-components: {}

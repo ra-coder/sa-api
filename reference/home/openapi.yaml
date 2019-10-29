@@ -360,9 +360,7 @@ paths:
           schema:
             properties:
               error:
-                type:
-                  - string
-                  - 'null'
+                type: string
               result:
                 items:
                   type: integer
@@ -430,9 +428,7 @@ paths:
                     type:
                       type: string
                   type: object
-                type:
-                  - string
-                  - array
+                type: array
             type: object
       tags:
         - Звонок
@@ -548,6 +544,8 @@ paths:
                 type: integer
               transcript:
                 type: array
+                items:
+                  type: object
             type: object
       tags: []
       description: |-
@@ -596,6 +594,8 @@ paths:
                 type: string
               transcript:
                 type: array
+                items:
+                  type: object
             type: object
         '404':
           description: Not Found
@@ -1013,13 +1013,6 @@ paths:
                   acl:
                     billing: read
                     info: write
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties: {}
-          x-examples:
-            example-1: {}
       operationId: post_users
       description: '-'
     get:
@@ -1033,7 +1026,7 @@ paths:
             type: object
             properties: {}
           examples:
-            Пример:
+            example:
               users:
                 - username: ra@speech.one
                   first_name: Александр
@@ -1129,13 +1122,6 @@ paths:
                   name: Продажи
                   users:
                     ra@speech.one: write
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties: {}
-          x-examples:
-            example-1: {}
       operationId: post_acl
       description: '-'
 definitions: {}

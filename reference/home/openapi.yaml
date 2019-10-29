@@ -1245,6 +1245,101 @@ paths:
             example-1: {}
       operationId: post_acl
       description: '-'
+  /available_projects:
+    get:
+      summary: Получить список доступных проектов
+      tags:
+        - Проекты
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+          examples:
+            Пример:
+              id: 105010
+              name: SpeechAnalytics
+      description: 'TODO: надо так же возвращать права пользователя в аккаунте, чтобы скрывать какие-то элементы интерфейса'
+  '/project/{project_id}/telephony/download_operators':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: 'Загрузить операторов из телефонии '
+      tags:
+        - Операторы
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              groups:
+                type: array
+                items: {}
+              operators:
+                type: array
+                items: {}
+  '/project/{project_id}/enable_recognition_date':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Поменять дату старта распознования
+      tags:
+        - Настройки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              date:
+                type: integer
+          examples:
+            example-1:
+              date: 100500
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              date:
+                type: integer
+          x-examples:
+            example-1:
+              date: 100500
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              date:
+                type: integer
+          x-examples:
+            example-1: {}
+    get:
+      summary: Текущая дата старта распознования
+      tags:
+        - Настройки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              date:
+                type: integer
 definitions: {}
 securityDefinitions: {}
 x-components: {}

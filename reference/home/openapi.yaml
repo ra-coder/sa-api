@@ -773,6 +773,8 @@ paths:
                   type: object
                 type: array
             type: object
+          examples:
+            example-1: {}
       summary: Список подписок на триггеры
       operationId: triggerList
       description: Создание подписки на триггер
@@ -977,7 +979,42 @@ paths:
           description: OK
           schema:
             type: object
-            properties: {}
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    acl:
+                      type: object
+                      required:
+                        - role
+                      properties:
+                        role:
+                          type: string
+                        billing:
+                          type: string
+                        info:
+                          type: string
+                        acl:
+                          type: string
+                        operators:
+                          type: string
+                        integration:
+                          type: string
+                        new_reports:
+                          type: string
+                        new_templates:
+                          type: string
+                  required:
+                    - username
+                    - acl
           examples:
             Пример ответа:
               users:
@@ -1017,7 +1054,42 @@ paths:
           name: body
           schema:
             type: object
-            properties: {}
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    acl:
+                      type: object
+                      required:
+                        - role
+                      properties:
+                        role:
+                          type: string
+                        billing:
+                          type: string
+                        info:
+                          type: string
+                        acl:
+                          type: string
+                        operators:
+                          type: string
+                        integration:
+                          type: string
+                        new_reports:
+                          type: string
+                        new_templates:
+                          type: string
+                  required:
+                    - username
+                    - acl
           x-examples:
             example-1: {}
       operationId: post_users
@@ -1031,7 +1103,42 @@ paths:
           description: OK
           schema:
             type: object
-            properties: {}
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    acl:
+                      type: object
+                      required:
+                        - role
+                      properties:
+                        role:
+                          type: string
+                        billing:
+                          type: string
+                        info:
+                          type: string
+                        acl:
+                          type: string
+                        operators:
+                          type: string
+                        integration:
+                          type: string
+                        new_reports:
+                          type: string
+                        new_templates:
+                          type: string
+                  required:
+                    - username
+                    - acl
           examples:
             Пример:
               users:

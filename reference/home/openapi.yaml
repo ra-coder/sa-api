@@ -776,6 +776,8 @@ paths:
       summary: Список подписок на триггеры
       operationId: triggerList
       description: Создание подписки на триггер
+      tags:
+        - Триггеры
   '/reports/trigger/{trigger_id}/delete':
     parameters:
       - in: path
@@ -802,6 +804,8 @@ paths:
             POST /api/v1/reports/trigger/2/delete
       summary: Удаление подписки на триггеры
       operationId: triggerSubcribtionRemove
+      tags:
+        - Триггеры
   /reports/trigger:
     post:
       consumes:
@@ -836,6 +840,8 @@ paths:
       responses:
         '200':
           description: OK
+      tags:
+        - Триггеры
   /reports:
     get:
       produces:
@@ -868,10 +874,14 @@ paths:
           in: query
           name: telephony_id
           description: id звонка из телефонии
-      description: ''
+      description: '-'
       responses:
         '200':
           description: OK
+      summary: Звонки
+      operationId: calls
+      tags:
+        - Отчеты
     parameters: []
   /auth/login:
     post:
@@ -956,6 +966,7 @@ paths:
           name: Cookie
           required: true
           description: session_id cookie
+      operationId: operator_groups
   '/project/{project_id}/users':
     post:
       summary: Добавление/удаление пользователей в проекте
@@ -1009,6 +1020,8 @@ paths:
             properties: {}
           x-examples:
             example-1: {}
+      operationId: post_users
+      description: '-'
     get:
       summary: Пользователи с доступом к проекту
       tags:
@@ -1048,7 +1061,8 @@ paths:
                   last_name: ''
                   acl:
                     role: demo
-      description: ''
+      description: '-'
+      operationId: get_users
     parameters:
       - type: integer
         name: project_id
@@ -1084,6 +1098,8 @@ paths:
                   users:
                     ra@speech.one: write
                     ak@speech.one: read
+      operationId: get_acl
+      description: '-'
     post:
       summary: 'Управление правами доступа к  отчетам и шаблонам '
       tags:
@@ -1120,6 +1136,8 @@ paths:
             properties: {}
           x-examples:
             example-1: {}
+      operationId: post_acl
+      description: '-'
 definitions: {}
 securityDefinitions: {}
 x-components: {}

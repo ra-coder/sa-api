@@ -8,41 +8,6 @@ info:
 schemes:
   - https
 paths:
-  /account:
-    get:
-      produces:
-        - application/json
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      responses:
-        '200':
-          description: OK
-          schema:
-            description: Проверка аккаунта
-            properties:
-              id:
-                type: number
-              status:
-                type: string
-            type: object
-            x-examples:
-              account:
-                value:
-                  id: 100001
-                  status: VALID
-      tags:
-        - Аккаунт
-      description: '### Узнать текущий аккаунт'
-      operationId: account
-      summary: Get Account
   /account/available_accounts:
     get:
       produces:
@@ -58,8 +23,8 @@ paths:
           required: true
           description: session_id cookie
       responses:
-        '200':
-          description: OK
+        '410':
+          description: Gone
           schema:
             items:
               description: Доступные аккаунты
@@ -77,7 +42,10 @@ paths:
             type: array
       tags:
         - Аккаунт
-      description: '### Список доступных аккаунтов'
+      description: |-
+        ### Список доступных аккаунтов
+
+        THIS METHOD IS DEPRECATED
       operationId: availableAccounts
       summary: Available Accounts
   '/account/change/{account_id}':
@@ -98,11 +66,14 @@ paths:
           required: true
           description: session_id cookie
       responses:
-        '200':
-          description: OK
+        '410':
+          description: Gone
       tags:
         - Аккаунт
-      description: '### Смена аккаунта (проекта)'
+      description: |-
+        ### Смена аккаунта (проекта)
+
+        THIS METHOD IS DEPRECATED
       operationId: changeAccount
       summary: Change Account(Project)
   /async_reports/generate_excel:
@@ -618,12 +589,7 @@ paths:
         Для пользования этим методом необходимо авторизоваться, то есть оба запроса (запрос авторизации и запрос выгрузки) должны быть в одной сессии.
       operationId: transcriptLite
       summary: Выгрузка транскрибации
-    get:
-      summary: ''
-      responses:
-        '200':
-          description: OK
-  /metrics/list:
+  '/project/{project_id}/metrics/list':
     get:
       produces:
         - application/json
@@ -675,11 +641,77 @@ paths:
                 type: array
             type: object
           examples:
-            example-1: {}
+            example-1:
+              metrics:
+                - aggregate: []
+                  description: ''
+                  filter: null
+                  is_lexical: false
+                  label: date_of_call
+                  name: Дата звонка
+                  parent: Мета параметры звонка
+                  rateable: false
+                  relative: false
+                  show_plot: false
+                  show_tabl: true
+                  unit: timestamp
+                - aggregate: []
+                  description: Номер телефона и имя оператора
+                  filter:
+                    choices:
+                      - '210'
+                      - '270'
+                      - '300'
+                      - '310'
+                      - UNKNOWN
+                    type: multiselect
+                  is_lexical: false
+                  label: operator
+                  name: Оператор
+                  parent: Мета параметры звонка
+                  rateable: false
+                  relative: false
+                  show_plot: false
+                  show_tabl: false
+                  unit: enum
+                - aggregate: []
+                  description: 'Операторы, относящиеся только к выбранным группам'
+                  filter:
+                    choices:
+                      - (Без группы)
+                      - Операторы
+                    type: multiselect
+                  is_lexical: false
+                  label: operatorTeam
+                  name: Группа операторов
+                  parent: Мета параметры звонка
+                  rateable: false
+                  relative: false
+                  show_plot: false
+                  show_tabl: false
+                  unit: enum
+                - aggregate:
+                    - sum
+                  description: ''
+                  filter: null
+                  is_lexical: false
+                  label: quantity
+                  name: Количество звонков
+                  parent: Мета параметры звонка
+                  rateable: false
+                  relative: false
+                  show_plot: false
+                  show_tabl: true
+                  unit: '1'
       tags: []
       description: "Выбираем **label** из списка и конструируем объект `metric_filters`. Если `filter.type == range`, то в качестве значения поля **operator** можно выбрать только '**<**' или '**>**', а поля **value** - неотрицательные числа. А если `filter.type == multiselect`, то **operator** - только '**=**', **value** - подсписок списка `filter.choices`. В `metric_filters` можно использовать только не `is_lexical` метрики.\n\nТакже можно фильтровать по номеру клиента (`\"label\":\"client\"`) для этого искомые номера необходимо перечислить в списке **value**, а **operator** задать как '**=**'.\n\n### phrase_filters\n\n`phrase_filters` - список объектов со следующими полями:\n```\nlabel - всегда равен \"phrases\"\noperator - \"operator_include\", \"client_include\" или \"both_include\"- искать \nпо каналу оператора, клиента или по обоим каналам\nvalue - список искомых фраз\nmin_matches - минимальное количество совпадений (целое положительное число)\nvocabulary_ids - список id словарей, по которым будет производиться поиск\n```\nПример:\n```\n{\"phrase_filters\":[\n\t{\n          \"operator\":\"both_include\",\n          \"value\":[],\n          \"label\":\"phrases\",\n          \"min_matches\":2,\n          \"vocabulary_ids\":[425848,179389]\n        },\n        {\n          \"operator\":\"operator_include\",\n          \"value\":[\"Отлично\", \"Добрый день\"],\n          \"label\":\"phrases\",\n          \"min_matches\":1,\n          \"vocabulary_ids\":[]\n        }\n]}\n```\nВ примере в первом случае поиск будет производиться по двум словарям: \"Некомпетентность оператора\" и \"Оператор просит прощения\", в звонке должно найтись по крайней мере суммарно 2 слова из этих словарей. Во втором случае поиск будет только по каналу оператора, в звонках должна найтись хотя бы одна из фраз \"Отлично\" или \"Добрый день\". В результате работы метода будут звонки, которые нашлись одновременно и в первом и во втором случаях.\n"
       operationId: metricList
       summary: Список возможных фильтров
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
   '/project/{project_id}/rating/templates':
     get:
       produces:
@@ -719,7 +751,7 @@ paths:
       operationId: ratingTemplates
       summary: Список доступных шаблонов оценок
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
@@ -761,7 +793,7 @@ paths:
       operationId: vocabularies
       summary: Список доступных словарей
   /reports/triggers:
-    post:
+    get:
       produces:
         - application/json
       parameters:
@@ -796,8 +828,9 @@ paths:
           examples:
             example-1: {}
       summary: Список подписок на триггеры
-      operationId: triggerList
-      description: Создание подписки на триггер
+      description: |-
+        Список подписок на триггеры
+        THIS IS DEPRECATED METHOD
       tags:
         - Триггеры
   '/reports/trigger/{trigger_id}/delete':
@@ -824,8 +857,8 @@ paths:
         Пример:
 
             POST /api/v1/reports/trigger/2/delete
+        THIS IS DEPRECATED METHOD
       summary: Удаление подписки на триггеры
-      operationId: triggerSubcribtionRemove
       tags:
         - Триггеры
   /reports/trigger:
@@ -864,6 +897,11 @@ paths:
           description: OK
       tags:
         - Триггеры
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
   /reports:
     get:
       produces:
@@ -928,6 +966,34 @@ paths:
               username:
                 type: string
             type: object
+          x-examples:
+            demo:
+              password: demo
+              username: demo
+        - description: ''
+          in: body
+          name: body
+          schema:
+            properties:
+              password:
+                type: string
+              username:
+                type: string
+            type: object
+          x-examples:
+            example-1: {}
+        - description: ''
+          in: body
+          name: body
+          schema:
+            properties:
+              password:
+                type: string
+              username:
+                type: string
+            type: object
+          x-examples:
+            example-1: {}
       responses:
         '200':
           description: OK
@@ -940,6 +1006,9 @@ paths:
               example-1:
                 value:
                   success: true
+          examples:
+            success:
+              success: true
       tags:
         - Авторизация
       description: |-
@@ -1266,7 +1335,7 @@ paths:
             example-1: {}
       operationId: post_acl
       description: '-'
-  /available_projects:
+  /project/available_projects:
     get:
       summary: Получить список доступных проектов
       tags:
@@ -1286,6 +1355,11 @@ paths:
               id: 105010
               name: SpeechAnalytics
       description: 'TODO: надо так же возвращать права пользователя в аккаунте, чтобы скрывать какие-то элементы интерфейса'
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+    parameters: []
   '/project/{project_id}/telephony/download_operators':
     parameters:
       - type: string
@@ -1430,7 +1504,52 @@ paths:
       summary: Получить список отчетов
       tags:
         - Отчеты
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            example-1:
+              reports:
+                - columns:
+                    - date_of_call
+                    - quantity
+                    - duration
+                    - duration_answer
+                    - operator_interjections_count_abs
+                    - client_interjections_count_abs
+                    - rating
+                  filters: {}
+                  frozen: false
+                  id: 45118624
+                  name: Лояльность клиентов
+                  phrase_filters: []
+                  rating_template_id: 41631094
+                  slices:
+                    - rating
+                - columns:
+                    - date_of_call
+                    - quantity
+                    - duration
+                    - duration_answer
+                    - operator_speech_duration
+                    - client_speech_duration
+                    - rating
+                  filters: {}
+                  frozen: false
+                  id: 42690241
+                  name: Качество работы операторов
+                  phrase_filters: []
+                  rating_template_id: 52385575
+                  slices:
+                    - operator
+                    - rating
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
   '/recording/async/download/{call_id}':
     post:
       summary: Начать загрузку звонка
@@ -1668,7 +1787,85 @@ paths:
       summary: Получить настройки интеграции и операторов
       tags:
         - Настройки
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            example-1:
+              billing_INN: ''
+              billing_company_name: ''
+              departments:
+                - id: 463
+                  name: Операторы
+                - id: 464
+                  name: (Без группы)
+              operators:
+                - enabled_recognition: true
+                  group_id: 463
+                  name: '270'
+                  phone: '270'
+                - enabled_recognition: true
+                  group_id: 463
+                  name: '310'
+                  phone: '310'
+                - enabled_recognition: true
+                  group_id: 463
+                  name: UNKNOWN
+                  phone: UNKNOWN
+              project_name: SpeechAnalyticsDevelop
+              telephony:
+                parameters:
+                  api_key: '<secret>'
+                  user_id: '123123'
+                  wav_api_key: '<secret>'
+                vendor: sipuni
+              timezone: Europe/Moscow
+        '':
+          examples:
+            example-1:
+              billing_INN: ''
+              billing_company_name: ''
+              departments:
+                - id: 463
+                  name: Операторы
+                - id: 464
+                  name: (Без группы)
+              operators:
+                - enabled_recognition: true
+                  group_id: 463
+                  name: '270'
+                  phone: '270'
+                - enabled_recognition: true
+                  group_id: 463
+                  name: '300'
+                  phone: '300'
+                - enabled_recognition: false
+                  group_id: 464
+                  name: Abc name
+                  phone: '210'
+                - enabled_recognition: true
+                  group_id: 463
+                  name: '310'
+                  phone: '310'
+                - enabled_recognition: true
+                  group_id: 463
+                  name: UNKNOWN
+                  phone: UNKNOWN
+              project_name: SpeechAnalyticsDevelop
+              telephony:
+                parameters:
+                  api_key: '<secret>'
+                  user_id: '012312'
+                  wav_api_key: '<secret>'
+                vendor: sipuni
+              timezone: Europe/Moscow
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
   '/project/{project_id}':
     parameters:
       - type: string
@@ -1679,7 +1876,25 @@ paths:
       summary: Получить данные проекта
       tags:
         - Аккаунт
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            example-1:
+              id: 101010
+              status: VALID
+        '':
+          examples:
+            example-1:
+              id: 101010
+              status: VALID
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
   '/project/{project_id}/balance':
     parameters:
       - type: string
@@ -1692,6 +1907,153 @@ paths:
         - Аккаунт
         - Оплата
       responses: {}
+  '/project/{project_id}/reports/trigger/{trigger_id}/delete':
+    parameters:
+      - in: path
+        name: trigger_id
+        required: true
+        type: string
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+    post:
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+      responses:
+        '200':
+          description: OK
+      description: |-
+        Пример:
+
+            POST /api/v1/reports/trigger/2/delete
+      summary: Удаление подписки на триггеры
+      operationId: triggerSubcribtionRemove
+      tags:
+        - Триггеры
+  '/project/{project_id}/reports/trigger':
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+        - in: body
+          name: body
+          schema:
+            properties:
+              endpoint_url:
+                type: string
+              report_id:
+                type: integer
+            type: object
+      description: |-
+        Метод принимает json-объект с параметрами:
+        ```
+        report_id - идентификатор отчета
+        endpoint_url - url на который будут отправляться звонки
+        ```
+      summary: Подписка на триггеры
+      operationId: triggerSubscription
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Триггеры
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+  '/project/{project_id}/reports/triggers':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              triggers:
+                items:
+                  properties:
+                    endpoint_url:
+                      type: string
+                    id:
+                      type: integer
+                    report_id:
+                      type: integer
+                    report_name:
+                      type: string
+                  type: object
+                type: array
+            type: object
+          examples:
+            example-1: {}
+      summary: Список подписок на триггеры
+      operationId: triggerList
+      description: Список подписок на триггеры
+      tags:
+        - Триггеры
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+  '/project/{project_id}/rating/recalculation/status':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Статус пересчета шаблонов оценок
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            example-1:
+              result:
+                - progress: null
+                  rating_template_id: '41631094'
+                  state: obsolete
+                - progress: null
+                  rating_template_id: '52385575'
+                  state: obsolete
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
 definitions: {}
 securityDefinitions: {}
 x-components: {}

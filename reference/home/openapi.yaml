@@ -1361,6 +1361,7 @@ paths:
       tags:
         - Настройки
       responses: {}
+      description: Проверить подключение к телефонии
   '/downloads/{filename}':
     parameters:
       - type: string

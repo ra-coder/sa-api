@@ -1287,6 +1287,8 @@ paths:
               operators:
                 type: array
                 items: {}
+          examples:
+            example-1: {}
   '/project/{project_id}/enable_recognition_date':
     parameters:
       - type: string

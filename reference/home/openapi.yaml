@@ -662,11 +662,13 @@ paths:
                   type: object
                 type: array
             type: object
+          examples:
+            example-1: {}
       tags: []
       description: "Выбираем **label** из списка и конструируем объект `metric_filters`. Если `filter.type == range`, то в качестве значения поля **operator** можно выбрать только '**<**' или '**>**', а поля **value** - неотрицательные числа. А если `filter.type == multiselect`, то **operator** - только '**=**', **value** - подсписок списка `filter.choices`. В `metric_filters` можно использовать только не `is_lexical` метрики.\n\nТакже можно фильтровать по номеру клиента (`\"label\":\"client\"`) для этого искомые номера необходимо перечислить в списке **value**, а **operator** задать как '**=**'.\n\n### phrase_filters\n\n`phrase_filters` - список объектов со следующими полями:\n```\nlabel - всегда равен \"phrases\"\noperator - \"operator_include\", \"client_include\" или \"both_include\"- искать \nпо каналу оператора, клиента или по обоим каналам\nvalue - список искомых фраз\nmin_matches - минимальное количество совпадений (целое положительное число)\nvocabulary_ids - список id словарей, по которым будет производиться поиск\n```\nПример:\n```\n{\"phrase_filters\":[\n\t{\n          \"operator\":\"both_include\",\n          \"value\":[],\n          \"label\":\"phrases\",\n          \"min_matches\":2,\n          \"vocabulary_ids\":[425848,179389]\n        },\n        {\n          \"operator\":\"operator_include\",\n          \"value\":[\"Отлично\", \"Добрый день\"],\n          \"label\":\"phrases\",\n          \"min_matches\":1,\n          \"vocabulary_ids\":[]\n        }\n]}\n```\nВ примере в первом случае поиск будет производиться по двум словарям: \"Некомпетентность оператора\" и \"Оператор просит прощения\", в звонке должно найтись по крайней мере суммарно 2 слова из этих словарей. Во втором случае поиск будет только по каналу оператора, в звонках должна найтись хотя бы одна из фраз \"Отлично\" или \"Добрый день\". В результате работы метода будут звонки, которые нашлись одновременно и в первом и во втором случаях.\n"
       operationId: metricList
       summary: Список возможных фильтров
-  /rating/templates:
+  '/project/{project_id}/rating/templates':
     get:
       produces:
         - application/json
@@ -699,10 +701,16 @@ paths:
                   type: string
               type: object
             type: array
-      tags: []
+      tags:
+        - Шаблоны оценки
       description: '### Список доступных шаблонов оценок'
       operationId: ratingTemplates
       summary: Список доступных шаблонов оценок
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
   /vocabularies:
     get:
       produces:
@@ -1342,6 +1350,207 @@ paths:
             properties:
               date:
                 type: integer
+  '/project/{project_id}/settings/telephony/check':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Проверка подключения к телефонии
+      tags:
+        - Настройки
+      responses: {}
+  '/downloads/{filename}':
+    parameters:
+      - type: string
+        name: filename
+        in: path
+        required: true
+    get:
+      summary: Скачать файл по ранее полученному имени
+      tags: []
+      responses: {}
+  '/project/{project_id}/reports/{report_id}':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: report_id
+        in: path
+        required: true
+    delete:
+      summary: Удалить отчет
+      tags:
+        - Отчеты
+      responses: {}
+    post:
+      summary: Создать отчет
+      tags:
+        - Отчеты
+      responses: {}
+    put:
+      summary: Изменить отчет
+      tags:
+        - Отчеты
+      responses: {}
+  '/project/{project_id}/reports':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Получить список отчетов
+      tags:
+        - Отчеты
+      responses: {}
+  /recording/async/download/call_id:
+    post:
+      summary: Начать загрузку звонка
+      tags:
+        - Звонок
+      responses: {}
+  '/recording/async/signals/{call_id}':
+    parameters:
+      - type: string
+        name: call_id
+        in: path
+        required: true
+    post:
+      summary: Начать расчет осцилограмм
+      tags:
+        - Звонок
+      responses: {}
+  '/recording/async/get_result/{task_id}':
+    parameters:
+      - type: string
+        name: task_id
+        in: path
+        required: true
+    get:
+      summary: Получить статус инициорованной задачи
+      tags:
+        - Звонок
+      responses: {}
+  '/project/{project_id}/rating/templates/{rating_template_id}':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: rating_template_id
+        in: path
+        required: true
+    delete:
+      summary: Удалить шаблон оценки
+      tags:
+        - Шаблоны оценки
+      responses: {}
+    get:
+      summary: Получить шаблон оценки
+      tags:
+        - Шаблоны оценки
+      responses: {}
+    post:
+      summary: Добавить шаблон оценки
+      tags:
+        - Шаблоны оценки
+      responses: {}
+    put:
+      summary: Изменить шаблон оценки
+      tags:
+        - Шаблоны оценки
+      responses: {}
+  '/project/{project_id}/rating/generate_metric_label':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Получить metric_label для новой метрики в шаблоне
+      tags:
+        - Шаблоны оценки
+      responses: {}
+  '/project/{project_id}/rating/templates/check_existence':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Проверить есть ли шаблон по id/имени
+      tags:
+        - Шаблоны оценки
+      responses: {}
+  '/project/{project_id}/rating/recalculation/start/{template_id}':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: template_id
+        in: path
+        required: true
+    post:
+      summary: Запустить пересчет оценок
+      tags:
+        - Шаблоны оценки
+      responses: {}
+  '/project/{project_id}/rating/recalculation/stop/{rating_template_id}':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: rating_template_id
+        in: path
+        required: true
+    post:
+      summary: Остановить пересчет оценок
+      tags:
+        - Шаблоны оценки
+      responses: {}
+  '/project/{project_id}/payment/history':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: История пополнений баланса
+      tags:
+        - Оплата
+      responses: {}
+  '/project/{project_id}/payment/discounts':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Тарифы при разных суммах пополнения
+      tags:
+        - Оплата
+      responses: {}
+  '/project/{project_id}/payment/bill/recognition_minutes':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Сгенирировать счет
+      tags:
+        - Оплата
+      responses: {}
+      description: ''
 definitions: {}
 securityDefinitions: {}
 x-components: {}

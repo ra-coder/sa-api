@@ -379,7 +379,7 @@ paths:
         Далее можно получить транскрибацию с размеченными вхождениями слов.
       operationId: getTaskResult
       summary: Статус задачи по поиску
-  /calls/calls_period:
+  '/project/{project_id}/calls/calls_period':
     post:
       consumes:
         - application/json
@@ -441,6 +441,11 @@ paths:
         **date_from** - конец временного промежутка (timestamp - целое число)
       operationId: callsPeriod
       summary: Список звонков
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
   '/calls/{call_id}':
     parameters:
       - in: path
@@ -549,7 +554,8 @@ paths:
               transcript:
                 type: array
             type: object
-      tags: []
+      tags:
+        - Звонок
       description: |-
         **detailed_matches** - список, сколько раз какое слово найдено
 
@@ -604,13 +610,19 @@ paths:
               error:
                 type: string
             type: object
-      tags: []
+      tags:
+        - Звонок
       description: |-
         ### Выгрузка транскрибации
 
         Для пользования этим методом необходимо авторизоваться, то есть оба запроса (запрос авторизации и запрос выгрузки) должны быть в одной сессии.
       operationId: transcriptLite
       summary: Выгрузка транскрибации
+    get:
+      summary: ''
+      responses:
+        '200':
+          description: OK
   /metrics/list:
     get:
       produces:
@@ -892,6 +904,7 @@ paths:
       operationId: calls
       tags:
         - Отчеты
+        - Звонок
     parameters: []
   /auth/login:
     post:
@@ -1360,7 +1373,12 @@ paths:
       summary: Проверка подключения к телефонии
       tags:
         - Настройки
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
       description: Проверить подключение к телефонии
   '/downloads/{filename}':
     parameters:
@@ -1371,7 +1389,12 @@ paths:
     get:
       summary: Скачать файл по ранее полученному имени
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
   '/project/{project_id}/reports/{report_id}':
     parameters:
       - type: string
@@ -1408,12 +1431,17 @@ paths:
       tags:
         - Отчеты
       responses: {}
-  /recording/async/download/call_id:
+  '/recording/async/download/{call_id}':
     post:
       summary: Начать загрузку звонка
       tags:
         - Звонок
       responses: {}
+    parameters:
+      - type: string
+        name: call_id
+        in: path
+        required: true
   '/recording/async/signals/{call_id}':
     parameters:
       - type: string
@@ -1550,8 +1578,120 @@ paths:
       summary: Сгенирировать счет
       tags:
         - Оплата
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
       description: ''
+  '/calls/{call_id}/karaoke_timings':
+    parameters:
+      - type: string
+        name: call_id
+        in: path
+        required: true
+    post:
+      summary: Время для караоке
+      tags:
+        - Звонок
+      responses: {}
+    get:
+      summary: Время для караоке
+      tags:
+        - Звонок
+      responses: {}
+  '/project/{project_id}/calls/id':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: 'Найти звонок по id из телефонии '
+      tags:
+        - Звонок
+      responses: {}
+      parameters:
+        - type: string
+          in: query
+          name: telephony_id
+          required: true
+  /auth/registration:
+    post:
+      summary: Создать нового пользователя
+      tags:
+        - Авторизация
+      responses: {}
+  /auth/check_email:
+    post:
+      summary: Проверить свободность email для создания нового пользователя
+      tags:
+        - Авторизация
+      responses: {}
+  /auth/logout:
+    post:
+      summary: Выйти из ситемы
+      tags:
+        - Авторизация
+      responses: {}
+  /async_reports/generate_node:
+    post:
+      summary: Получить данные для отображения блока в отчете
+      tags:
+        - Отчеты
+      responses: {}
+  /async_reports/generate_calls:
+    post:
+      summary: Получить звонки для отображения блока в отчете
+      tags:
+        - Отчеты
+      responses: {}
+  /async_reports/generate_plot:
+    post:
+      summary: Получить данныее отображения графика в отчете
+      tags:
+        - Отчеты
+      responses: {}
+  '/project/{project_id}/settings':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Изменить настройки интеграции и операторов
+      tags:
+        - Настройки
+      responses: {}
+    get:
+      summary: Получить настройки интеграции и операторов
+      tags:
+        - Настройки
+      responses: {}
+  '/project/{project_id}':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Получить данные проекта
+      tags:
+        - Аккаунт
+      responses: {}
+  '/project/{project_id}/balance':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Получить баланс минут распознования
+      tags:
+        - Аккаунт
+        - Оплата
+      responses: {}
 definitions: {}
 securityDefinitions: {}
 x-components: {}

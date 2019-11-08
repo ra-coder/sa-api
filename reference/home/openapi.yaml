@@ -2156,6 +2156,45 @@ paths:
         name: project_id
         in: path
         required: true
+    post:
+      summary: ''
+      responses:
+        '200':
+          description: OK
+      description: Редактирование операторов
+      parameters:
+        - type: string
+          in: header
+          name: authorization
+        - type: string
+          in: header
+          name: cookie
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties: {}
+          description: Обновленный полный список операторов
+          x-examples:
+            example-1:
+              operators:
+                - enabled_recognition: false
+                  enabled_recognition_date: 1573132990
+                  group_id: 463
+                  name: '213'
+                  phone: '210'
+              groups:
+                - id: 463
+                  name: Операторы
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties: {}
+          description: Обновленный полный список операторов
+          x-examples:
+            example-1: {}
 basePath: /api/v1
 host: cloud.speechanalytics.ru
 x-components: {}

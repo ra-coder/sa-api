@@ -640,6 +640,10 @@ paths:
                 - id: 500
                   name: Prodaji
                   telephony: true
+            Пример-2:
+              groups:
+                - id: 463
+                  name: Операторы
           schema:
             type: object
             properties:
@@ -2081,7 +2085,7 @@ paths:
         name: project_id
         in: path
         required: true
-  '/project/{project_id}/operators':
+  '/account/{project_id}/operators':
     get:
       parameters:
         - type: string
@@ -2099,6 +2103,54 @@ paths:
           schema:
             type: object
             properties: {}
+          examples:
+            example-1:
+              operators:
+                - enabled_recognition: true
+                  enabled_recognition_date: 1573132990
+                  group_id: 463
+                  name: '210'
+                  phone: '210'
+                  telephony_group_id: null
+                  telephony_name: null
+                - enabled_recognition: true
+                  enabled_recognition_date: 1573132990
+                  group_id: 463
+                  name: '270'
+                  phone: '270'
+                  telephony_group_id: null
+                  telephony_name: null
+                - enabled_recognition: true
+                  enabled_recognition_date: 1573132990
+                  group_id: 463
+                  name: '300'
+                  phone: '300'
+                  telephony_group_id: null
+                  telephony_name: null
+                - enabled_recognition: true
+                  enabled_recognition_date: 1573132990
+                  group_id: 463
+                  name: '310'
+                  phone: '310'
+                  telephony_group_id: null
+                  telephony_name: null
+                - enabled_recognition: true
+                  enabled_recognition_date: 1573132990
+                  group_id: 463
+                  name: '370'
+                  phone: '370'
+                  telephony_group_id: null
+                  telephony_name: null
+                - enabled_recognition: true
+                  enabled_recognition_date: 1573132990
+                  group_id: 463
+                  name: UNKNOWN
+                  phone: UNKNOWN
+                  telephony_group_id: null
+                  telephony_name: null
+              groups:
+                - id: 463
+                  name: Операторы
     parameters:
       - type: string
         name: project_id

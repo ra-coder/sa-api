@@ -918,7 +918,9 @@ paths:
           description: OK
           schema:
             type: object
-            properties: {}
+            properties:
+              email:
+                type: string
       operationId: ''
   /auth/registration:
     post:
@@ -1427,14 +1429,14 @@ paths:
           in: header
           name: Authorization
     parameters: []
-  '/project/{project_id}/acl':
+  '/project/{project_id}/user/acl':
     parameters:
       - type: integer
         name: project_id
         in: path
         required: true
     get:
-      summary: Права доступа к отчетам и шаблонам
+      summary: Права доступа текущего пользователя
       tags:
         - ACL
       responses:
@@ -1442,186 +1444,25 @@ paths:
           description: OK
           schema:
             type: object
-            properties: {}
-          examples:
-            Пример:
-              templates:
-                - id: 100500
-                  name: 100 бальный продажи
-                  users:
-                    ra@speech.one: write
-                    ak@speech.one: read
-              reports:
-                - id: 100300
-                  name: Продажи
-                  users:
-                    ra@speech.one: write
-                    ak@speech.one: read
+            properties:
+              permissions:
+                type: object
+                required:
+                  - permission
+                  - level
+                properties:
+                  permission:
+                    type: string
+                  level:
+                    type: string
+                  object_id:
+                    type: integer
+                    description: Номер отчета или шаблона оценок
+            required:
+              - permissions
       operationId: get_acl
       description: '-'
-    post:
-      summary: 'Управление правами доступа к  отчетам и шаблонам '
-      tags:
-        - ACL
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties: {}
-          x-examples:
-            Пример:
-              templates:
-                - id: 100500
-                  name: 100 бальный продажи
-                  users:
-                    ra@speech.one: write
-                    ak@speech.one: write
-              reports:
-                - id: 100300
-                  name: Продажи
-                  users:
-                    ra@speech.one: write
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties: {}
-          x-examples:
-            example-1: {}
-      operationId: post_acl
-      description: '-'
   '/project/{project_id}/users':
-    post:
-      summary: Добавление/удаление пользователей в проекте
-      tags:
-        - ACL
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              users:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    username:
-                      type: string
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                    acl:
-                      type: object
-                      required:
-                        - role
-                      properties:
-                        role:
-                          type: string
-                        billing:
-                          type: string
-                        info:
-                          type: string
-                        acl:
-                          type: string
-                        operators:
-                          type: string
-                        integration:
-                          type: string
-                        new_reports:
-                          type: string
-                        new_templates:
-                          type: string
-                  required:
-                    - username
-                    - acl
-          examples:
-            Пример ответа:
-              users:
-                - username: ra@speech.one
-                  first_name: Александр
-                  last_name: ''
-                  acl:
-                    billing: write
-                    info: write
-                    acl: write
-                    operators: write
-                    integration: write
-                    new_reports: write
-                    new_templates: write
-                - username: aa@speech.one
-                  first_name: Алексей
-                  last_name: К
-                  acl:
-                    billing: read
-                    info: write
-                    new_reports: read
-                    new_templates: read
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties: {}
-          x-examples:
-            Пример запроса:
-              users:
-                - username: aa@speech.one
-                  acl:
-                    billing: read
-                    info: write
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              users:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    username:
-                      type: string
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                    acl:
-                      type: object
-                      required:
-                        - role
-                      properties:
-                        role:
-                          type: string
-                        billing:
-                          type: string
-                        info:
-                          type: string
-                        acl:
-                          type: string
-                        operators:
-                          type: string
-                        integration:
-                          type: string
-                        new_reports:
-                          type: string
-                        new_templates:
-                          type: string
-                  required:
-                    - username
-                    - acl
-          x-examples:
-            example-1: {}
-      operationId: post_users
-      description: '-'
     get:
       summary: Пользователи с доступом к проекту
       tags:
@@ -1643,30 +1484,10 @@ paths:
                       type: string
                     last_name:
                       type: string
-                    acl:
-                      type: object
-                      required:
-                        - role
-                      properties:
-                        role:
-                          type: string
-                        billing:
-                          type: string
-                        info:
-                          type: string
-                        acl:
-                          type: string
-                        operators:
-                          type: string
-                        integration:
-                          type: string
-                        new_reports:
-                          type: string
-                        new_templates:
-                          type: string
-                  required:
-                    - username
-                    - acl
+                    id:
+                      type: string
+                    phone:
+                      type: string
           examples:
             Пример:
               users:
@@ -1696,7 +1517,7 @@ paths:
                   last_name: ''
                   acl:
                     role: demo
-      description: '-'
+      description: 'Возвращает список пользователей, у которых есть доступ к проекту'
       operationId: get_users
     parameters:
       - type: integer
@@ -2195,6 +2016,173 @@ paths:
           description: Обновленный полный список операторов
           x-examples:
             example-1: {}
+  '/project/{project_id}/user/{user_id}/acl':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: user_id
+        in: path
+        required: true
+    get:
+      summary: Список прав пользователя
+      tags: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              permissions:
+                type: object
+                required:
+                  - permission
+                  - level
+                properties:
+                  permission:
+                    type: string
+                  level:
+                    type: string
+                  object_id:
+                    type: integer
+                    description: Номер отчета или шаблона оценок
+            required:
+              - permissions
+      description: Список прав пользователя
+    post:
+      summary: Задать список прав
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+      description: |
+        Возможные права:
+        - manager: Менеджер - обязательно должно быть в списке прав, даёт некие базовые возможности
+        - download-audio: Прослушивание аудиозаписей
+        - change-operators: Настройка операторов
+        - change-telephony-credentials: Изменение учетных данных телефонии
+        - find-matching-transcripts: Поиск по звонкам
+        - billing: Баланс
+        - excel-reports: Выгрузка отчетов в excel
+        - acl: Распределение прав
+        - new-reports: Новые отчеты
+        - new-rating-templates: Новые шаблоны
+        - all-reports: Полный доступ ко всем отчетам
+        - all-rating-templates: Полный доступ ко всем шаблонам
+        - report: Определенный отчет - требуется указать id отчета в поле object_id, даёт доступ к определенному отчету
+        - rating-template: Определенный шаблон - требуется указать id шаблона в поле object_id, даёт доступ к определенному шаблону
+
+        Нужно также указать е-мейл пользователя
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              permissions:
+                type: object
+                required:
+                  - permission
+                  - level
+                properties:
+                  permission:
+                    type: string
+                  level:
+                    type: string
+                  object_id:
+                    type: integer
+                    description: Номер отчета или шаблона оценок
+            required:
+              - email
+              - permissions
+          description: ''
+  '/project/{project_id}/user/add':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Добавить пользователя
+      tags: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              user_id:
+                type: integer
+      description: 'Добавляет пользователя с единственным правом: Менеджер'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              phone:
+                type: string
+            required:
+              - email
+              - password
+              - first_name
+          description: ''
+  '/project/{project_id}/user/check_email':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: 'Зная емейл, получить пользователя'
+      tags: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              vacant:
+                type: boolean
+              id:
+                type: string
+              email:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              phone:
+                type: string
+            required:
+              - vacant
+      description: 'Проверить, занят ли емейл, и, если да, вернуть данные пользователя'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
 basePath: /api/v1
 host: cloud.speechanalytics.ru
 x-components: {}

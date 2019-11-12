@@ -2064,7 +2064,6 @@ paths:
       description: |
         Возможные права:
         - manager: Менеджер - обязательно должно быть в списке прав, даёт некие базовые возможности
-        - download-audio: Прослушивание аудиозаписей
         - change-operators: Настройка операторов
         - change-telephony-credentials: Изменение учетных данных телефонии
         - find-matching-transcripts: Поиск по звонкам

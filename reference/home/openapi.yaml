@@ -2217,13 +2217,13 @@ paths:
       parameters: []
       description: формат у filters и phrase_filters такой же как в отчетах
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
   '/project/{project_id}/tags/add':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
@@ -2260,11 +2260,11 @@ paths:
                   type: object
   '/project/{project_id}/tags/{tag_id}/delete':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
-      - type: string
+      - type: integer
         name: tag_id
         in: path
         required: true
@@ -2283,11 +2283,11 @@ paths:
       operationId: post-project-project_id-tags-delete
   '/project/{project_id}/tags/{tag_id}/update':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
-      - type: string
+      - type: integer
         name: tag_id
         in: path
         required: true
@@ -2322,7 +2322,7 @@ paths:
                   type: object
   '/project/{project_id}/labels':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
@@ -2348,7 +2348,7 @@ paths:
       operationId: get-project-project_id-labels
   '/project/{project_id}/labels/add':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
@@ -2377,11 +2377,11 @@ paths:
                 type: string
   '/project/{project_id}/labels/{label_id}/delete':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
-      - type: string
+      - type: integer
         name: label_id
         in: path
         required: true
@@ -2400,15 +2400,15 @@ paths:
       operationId: post-project-project_id-labels-label_id-delete
   '/project/{project_id}/labels/{label_id}/label_call/{call_id}':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
-      - type: string
+      - type: integer
         name: label_id
         in: path
         required: true
-      - type: string
+      - type: integer
         name: call_id
         in: path
         required: true
@@ -2420,15 +2420,15 @@ paths:
       operationId: post-project-project_id-labels-label_id-label_call-call_id
   '/project/{project_id}/labels/{label_id}/unlabel_call/{call_id}':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
-      - type: string
+      - type: integer
         name: label_id
         in: path
         required: true
-      - type: string
+      - type: integer
         name: call_id
         in: path
         required: true
@@ -2440,11 +2440,11 @@ paths:
       operationId: post-project-project_id-labels-label_id-unlabel_call-call_id
   '/project/{project_id}/labels/{label_id}/update':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
-      - type: string
+      - type: integer
         name: label_id
         in: path
         required: true

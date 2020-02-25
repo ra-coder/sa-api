@@ -1,12 +1,17 @@
+swagger: '2.0'
 info:
   contact:
     name: Admin
   description: 'Документация API  https://speechanalytics.ru/'
   title: SpeechAnalytics
   version: '1.0'
+schemes:
+  - https
 paths:
   /account/available_accounts:
     get:
+      produces:
+        - application/json
       parameters:
         - type: string
           in: header
@@ -43,8 +48,6 @@ paths:
         THIS METHOD IS DEPRECATED
       operationId: availableAccounts
       summary: Available Accounts
-      produces:
-        - application/json
   '/account/change/{account_id}':
     parameters:
       - in: path
@@ -52,6 +55,16 @@ paths:
         required: true
         type: string
     post:
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '410':
           description: Gone
@@ -63,18 +76,12 @@ paths:
         THIS METHOD IS DEPRECATED
       operationId: changeAccount
       summary: Change Account(Project)
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
   /async_reports/generate_excel:
     post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
         - type: string
           in: header
@@ -175,10 +182,6 @@ paths:
         Вернувшийся `task_id` нужно подставить в метод `async_reports/get_result/{task_id}` для получения результата выполнения операции
       operationId: generateExcel
       summary: Выгрузка отчетов
-      produces:
-        - application/json
-      consumes:
-        - application/json
   '/async_reports/get_result/{task_id}':
     parameters:
       - in: path
@@ -186,6 +189,18 @@ paths:
         required: true
         type: string
     get:
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -200,56 +215,12 @@ paths:
         А в поле result будет ссылка на отчёт (на файл в формате csv или xlsx).
       operationId: getResult
       summary: Get task result
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      produces:
-        - application/json
   /async_search_phrases/find_matching_transcripts:
     post:
-      responses:
-        '200':
-          description: OK
-          schema:
-            properties:
-              task_id:
-                type: string
-            type: object
-      tags: []
-      description: |-
-        date_till - начало временного промежутка поиска (timestamp - целое число)
-        date_from - конец временного промежутка поиска (timestamp - целое число)
-        metric_filters - количественные фильтры
-        phrase_filters - фразовые фильтры
-        ### metric_filters
-
-        `metric_filters` - это список объектов, каждый из которых содержит три поля: **value**, **label** и **operator**.
-
-        Пример `metric_filters`:
-        ```
-        "metric_filters":[
-          {
-            "value":"3",
-            "label":"interjections_count_abs",
-            "operator":"<"
-          },
-          {
-            "value":["270", "210"],
-            "label":"operator",
-            "operator":"="
-          },
-          ...
-        ]
-        ```
-      operationId: findTranscrib
-      summary: Поиск по транскрибации
+      consumes:
+        - application/json
+      produces:
+        - application/json
       parameters:
         - type: string
           in: header
@@ -299,10 +270,42 @@ paths:
                   type: object
                 type: array
             type: object
-      produces:
-        - application/json
-      consumes:
-        - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              task_id:
+                type: string
+            type: object
+      tags: []
+      description: |-
+        date_till - начало временного промежутка поиска (timestamp - целое число)
+        date_from - конец временного промежутка поиска (timestamp - целое число)
+        metric_filters - количественные фильтры
+        phrase_filters - фразовые фильтры
+        ### metric_filters
+
+        `metric_filters` - это список объектов, каждый из которых содержит три поля: **value**, **label** и **operator**.
+
+        Пример `metric_filters`:
+        ```
+        "metric_filters":[
+          {
+            "value":"3",
+            "label":"interjections_count_abs",
+            "operator":"<"
+          },
+          {
+            "value":["270", "210"],
+            "label":"operator",
+            "operator":"="
+          },
+          ...
+        ]
+        ```
+      operationId: findTranscrib
+      summary: Поиск по транскрибации
   '/async_search_phrases/get_result/{task_id}':
     parameters:
       - in: path
@@ -310,6 +313,18 @@ paths:
         required: true
         type: string
     get:
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
       responses:
         '200':
           description: OK
@@ -335,18 +350,73 @@ paths:
         Далее можно получить транскрибацию с размеченными вхождениями слов.
       operationId: getTaskResult
       summary: Статус задачи по поиску
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
+  '/project/{project_id}/calls/calls_period':
+    post:
+      consumes:
+        - application/json
       produces:
         - application/json
+      parameters:
+        - description: ''
+          in: header
+          name: Content-Type
+          required: true
+          type: string
+        - description: |-
+            При том `telephony_id` - это идентификатор звонка из телефонии клиента,
+            а `id` - идентификатор звонка нашей системы.
+            Если `"transcript_id":null`, значит транскрибация для звонка отсутствует.
+          in: body
+          name: body
+          schema:
+            properties:
+              date_from:
+                type: integer
+              date_till:
+                type: integer
+            type: object
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          schema:
+            properties:
+              calls:
+                items:
+                  properties:
+                    account_id:
+                      type: integer
+                    date_of_call:
+                      type: integer
+                    duration:
+                      type: number
+                    id:
+                      type: integer
+                    phone_number_client:
+                      type: string
+                    phone_number_operator:
+                      type: string
+                    telephony_id:
+                      type: string
+                    type:
+                      type: string
+                  type: object
+                type:
+                  - string
+                  - array
+            type: object
+      tags:
+        - Звонок
+      description: |-
+        **date_till** - начало временного промежутка (timestamp - целое число)
+        **date_from** - конец временного промежутка (timestamp - целое число)
+      operationId: callsPeriod
+      summary: Список звонков
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
   '/calls/{call_id}':
     parameters:
       - in: path
@@ -354,6 +424,8 @@ paths:
         required: true
         type: string
     get:
+      produces:
+        - application/json
       parameters:
         - type: string
           in: header
@@ -372,8 +444,6 @@ paths:
           description: OK
       tags:
         - Звонок
-      produces:
-        - application/json
   '/calls/{call_id}/transcript':
     parameters:
       - in: path
@@ -381,6 +451,39 @@ paths:
         required: true
         type: string
     post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+        - description: ''
+          in: body
+          name: body
+          schema:
+            properties:
+              label:
+                type: string
+              min_matches:
+                type: integer
+              operator:
+                type: string
+              value:
+                items: {}
+                type: array
+              vocabulary_ids:
+                items:
+                  type: integer
+                type: array
+            type: object
       responses:
         '200':
           description: OK
@@ -442,6 +545,15 @@ paths:
         **transcript** - транскрибация звонка
       operationId: callTranscript
       summary: Транскрибация с разметкой
+  '/calls/{call_id}/transcript_lite':
+    parameters:
+      - in: path
+        name: call_id
+        required: true
+        type: string
+    post:
+      produces:
+        - application/json
       parameters:
         - type: string
           in: header
@@ -452,36 +564,6 @@ paths:
           name: Cookie
           required: true
           description: session_id cookie
-        - description: ''
-          in: body
-          name: body
-          schema:
-            properties:
-              label:
-                type: string
-              min_matches:
-                type: integer
-              operator:
-                type: string
-              value:
-                items: {}
-                type: array
-              vocabulary_ids:
-                items:
-                  type: integer
-                type: array
-            type: object
-      produces:
-        - application/json
-      consumes:
-        - application/json
-  '/calls/{call_id}/transcript_lite':
-    parameters:
-      - in: path
-        name: call_id
-        required: true
-        type: string
-    post:
       responses:
         '200':
           description: OK
@@ -507,1215 +589,6 @@ paths:
         Для пользования этим методом необходимо авторизоваться, то есть оба запроса (запрос авторизации и запрос выгрузки) должны быть в одной сессии.
       operationId: transcriptLite
       summary: Выгрузка транскрибации
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      produces:
-        - application/json
-  /vocabularies:
-    get:
-      responses:
-        '200':
-          description: OK
-          schema:
-            properties:
-              vocabularies:
-                items:
-                  properties:
-                    description:
-                      type: string
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    role:
-                      type: string
-                  type: object
-                type: array
-            type: object
-      tags: []
-      description: словари
-      operationId: vocabularies
-      summary: Список доступных словарей
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      produces:
-        - application/json
-  /auth/login:
-    post:
-      responses:
-        '200':
-          description: OK
-          examples:
-            success:
-              success: true
-          schema:
-            properties:
-              success:
-                type: boolean
-            type: object
-            x-examples:
-              example-1:
-                value:
-                  success: true
-      tags:
-        - Авторизация
-      description: |-
-        В ответе есть директива **set-cookie** эту куку надо использовать во всех последующих запросах. |
-        Время жизни cookie - 1 год.
-      operationId: Login
-      summary: Login
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - description: ''
-          in: body
-          name: body
-          schema:
-            properties:
-              password:
-                type: string
-              username:
-                type: string
-            type: object
-          x-examples:
-            demo:
-              password: demo
-              username: demo
-        - description: ''
-          in: body
-          name: body
-          schema:
-            properties:
-              password:
-                type: string
-              username:
-                type: string
-            type: object
-          x-examples:
-            example-1: {}
-      produces:
-        - application/json
-      consumes:
-        - application/json
-        - application/xml
-  '/account/{account_id}/groups':
-    parameters:
-      - type: integer
-        name: account_id
-        in: path
-        required: true
-    get:
-      summary: Группы операторов
-      tags:
-        - Операторы
-      responses:
-        '200':
-          description: OK
-          examples:
-            Пример:
-              groups:
-                - id: 463
-                  name: Продажи
-                - id: 464
-                  name: (Без группы)
-                  default: true
-                - id: 500
-                  name: Prodaji
-                  telephony: true
-            Пример-2:
-              groups:
-                - id: 463
-                  name: Операторы
-          schema:
-            type: object
-            properties:
-              groups:
-                type: array
-                items:
-                  $ref: ../common/models/operatogroup.v1.yaml
-      operationId: operator_groups
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      description: Список групп операторов у аккаунта
-  '/project/{project_id}/rating/recalculation/status':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    get:
-      summary: Статус пересчета шаблонов оценок
-      tags:
-        - Шаблоны оценки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-          examples:
-            example-1:
-              result:
-                - progress: null
-                  rating_template_id: '41631094'
-                  state: obsolete
-                - progress: null
-                  rating_template_id: '52385575'
-                  state: obsolete
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-  '/project/{project_id}/reports/triggers':
-    get:
-      produces:
-        - application/json
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      responses:
-        '200':
-          description: OK
-          schema:
-            properties:
-              triggers:
-                items:
-                  properties:
-                    endpoint_url:
-                      type: string
-                    id:
-                      type: integer
-                    report_id:
-                      type: integer
-                    report_name:
-                      type: string
-                  type: object
-                type: array
-            type: object
-          examples:
-            example-1: {}
-      summary: Список подписок на триггеры
-      operationId: triggerList
-      description: Список подписок на триггеры
-      tags:
-        - Триггеры
-    parameters:
-      - type: integer
-        name: project_id
-        in: path
-        required: true
-  '/project/{project_id}/reports/trigger':
-    post:
-      consumes:
-        - application/json
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-        - in: body
-          name: body
-          schema:
-            properties:
-              endpoint_url:
-                type: string
-              report_id:
-                type: integer
-            type: object
-      description: |-
-        Метод принимает json-объект с параметрами:
-        ```
-        report_id - идентификатор отчета
-        endpoint_url - url на который будут отправляться звонки
-        ```
-      summary: Подписка на триггеры
-      operationId: triggerSubscription
-      responses:
-        '200':
-          description: OK
-      tags:
-        - Триггеры
-    parameters:
-      - type: integer
-        name: project_id
-        in: path
-        required: true
-  '/project/{project_id}/reports/trigger/{trigger_id}/delete':
-    parameters:
-      - in: path
-        name: trigger_id
-        required: true
-        type: string
-      - type: integer
-        name: project_id
-        in: path
-        required: true
-    post:
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      responses:
-        '200':
-          description: OK
-      description: |-
-        Пример:
-
-            POST /api/v1/reports/trigger/2/delete
-      summary: Удаление подписки на триггеры
-      operationId: triggerSubcribtionRemove
-      tags:
-        - Триггеры
-  '/project/{project_id}/balance':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    get:
-      summary: Получить баланс минут распознования
-      tags:
-        - Аккаунт
-        - Оплата
-      responses:
-        '200':
-          description: OK
-  '/project/{project_id}':
-    parameters:
-      - type: integer
-        name: project_id
-        in: path
-        required: true
-    get:
-      summary: Получить данные проекта
-      tags:
-        - Аккаунт
-      responses:
-        '200':
-          description: OK
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-  '/project/{project_id}/settings':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    post:
-      summary: Изменить настройки интеграции и операторов
-      responses:
-        '200':
-          description: OK
-    get:
-      summary: Получить настройки интеграции и операторов
-      tags:
-        - Настройки
-      responses:
-        '200':
-          description: OK
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-  /async_reports/generate_plot:
-    post:
-      summary: Получить данныее отображения графика в отчете
-      tags:
-        - Отчеты
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  /async_reports/generate_calls:
-    post:
-      summary: Получить звонки для отображения блока в отчете
-      tags:
-        - Отчеты
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  /async_reports/generate_node:
-    post:
-      summary: Получить данные для отображения блока в отчете
-      tags:
-        - Отчеты
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  /auth/logout:
-    post:
-      summary: Выйти из ситемы
-      tags:
-        - Авторизация
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-      operationId: logout
-  /auth/check_email:
-    post:
-      summary: Проверить свободность email для создания нового пользователя
-      tags:
-        - Авторизация
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-      operationId: ''
-  /auth/registration:
-    post:
-      summary: Создать нового пользователя
-      tags:
-        - Авторизация
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/project/{project_id}/calls/id':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    get:
-      summary: 'Найти звонок по id из телефонии '
-      tags:
-        - Звонок
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-      parameters:
-        - type: string
-          in: query
-          name: telephony_id
-          required: true
-  '/calls/{call_id}/karaoke_timings':
-    parameters:
-      - type: string
-        name: call_id
-        in: path
-        required: true
-    post:
-      summary: Время для караоке
-      tags:
-        - Звонок
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-    get:
-      summary: Время для караоке
-      tags:
-        - Звонок
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/project/{project_id}/payment/bill/recognition_minutes':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    post:
-      summary: Сгенирировать счет
-      tags:
-        - Оплата
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-      description: ''
-  '/project/{project_id}/payment/discounts':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    get:
-      summary: Тарифы при разных суммах пополнения
-      tags:
-        - Оплата
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/project/{project_id}/payment/history':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    get:
-      summary: История пополнений баланса
-      tags:
-        - Оплата
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/project/{project_id}/rating/recalculation/stop/{rating_template_id}':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-      - type: string
-        name: rating_template_id
-        in: path
-        required: true
-    post:
-      summary: Остановить пересчет оценок
-      tags:
-        - Шаблоны оценки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/project/{project_id}/rating/recalculation/start/{template_id}':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-      - type: string
-        name: template_id
-        in: path
-        required: true
-    post:
-      summary: Запустить пересчет оценок
-      tags:
-        - Шаблоны оценки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/project/{project_id}/rating/templates/check_existence':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    get:
-      summary: Проверить есть ли шаблон по id/имени
-      tags:
-        - Шаблоны оценки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/project/{project_id}/rating/generate_metric_label':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    post:
-      summary: Получить metric_label для новой метрики в шаблоне
-      tags:
-        - Шаблоны оценки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/project/{project_id}/rating/templates/{rating_template_id}':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-      - type: string
-        name: rating_template_id
-        in: path
-        required: true
-    delete:
-      summary: Удалить шаблон оценки
-      tags:
-        - Шаблоны оценки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-    get:
-      summary: Получить шаблон оценки
-      tags:
-        - Шаблоны оценки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-    post:
-      summary: Добавить шаблон оценки
-      tags:
-        - Шаблоны оценки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-    put:
-      summary: Изменить шаблон оценки
-      tags:
-        - Шаблоны оценки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/recording/async/get_result/{task_id}':
-    parameters:
-      - type: string
-        name: task_id
-        in: path
-        required: true
-    get:
-      summary: Получить статус инициорованной задачи
-      tags:
-        - Звонок
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/recording/async/signals/{call_id}':
-    parameters:
-      - type: string
-        name: call_id
-        in: path
-        required: true
-    post:
-      summary: Начать расчет осцилограмм
-      tags:
-        - Звонок
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/recording/async/download/{call_id}':
-    post:
-      summary: Начать загрузку звонка
-      tags:
-        - Звонок
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-    parameters:
-      - type: string
-        name: call_id
-        in: path
-        required: true
-  '/project/{project_id}/reports':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    get:
-      summary: Получить список отчетов
-      tags:
-        - Отчеты
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-          examples:
-            example-1:
-              reports:
-                - columns:
-                    - date_of_call
-                    - quantity
-                    - duration
-                    - duration_answer
-                    - operator_interjections_count_abs
-                    - client_interjections_count_abs
-                    - rating
-                  filters: {}
-                  frozen: false
-                  id: 45118624
-                  name: Лояльность клиентов
-                  phrase_filters: []
-                  rating_template_id: 41631094
-                  slices:
-                    - rating
-                - columns:
-                    - date_of_call
-                    - quantity
-                    - duration
-                    - duration_answer
-                    - operator_speech_duration
-                    - client_speech_duration
-                    - rating
-                  filters: {}
-                  frozen: false
-                  id: 42690241
-                  name: Качество работы операторов
-                  phrase_filters: []
-                  rating_template_id: 52385575
-                  slices:
-                    - operator
-                    - rating
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-  '/project/{project_id}/reports/{report_id}':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-      - type: string
-        name: report_id
-        in: path
-        required: true
-    delete:
-      summary: Удалить отчет
-      tags:
-        - Отчеты
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-    post:
-      summary: Создать отчет
-      tags:
-        - Отчеты
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-    put:
-      summary: Изменить отчет
-      tags:
-        - Отчеты
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/downloads/{filename}':
-    parameters:
-      - type: string
-        name: filename
-        in: path
-        required: true
-    get:
-      summary: Скачать файл по ранее полученному имени
-      tags: []
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-  '/project/{project_id}/settings/telephony/check':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    post:
-      summary: Проверка подключения к телефонии
-      tags:
-        - Настройки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties: {}
-      description: Проверить подключение к телефонии
-  '/project/{project_id}/enable_recognition_date':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    post:
-      summary: Поменять дату старта распознования
-      tags:
-        - Настройки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              date:
-                type: integer
-          examples:
-            example-1:
-              date: 100500
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              date:
-                type: integer
-          x-examples:
-            example-1:
-              date: 100500
-        - in: body
-          name: body
-          schema:
-            type: object
-            properties:
-              date:
-                type: integer
-          x-examples:
-            example-1: {}
-    get:
-      summary: Текущая дата старта распознования
-      tags:
-        - Настройки
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              date:
-                type: integer
-  '/project/{project_id}/telephony/download_operators':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    post:
-      summary: 'Загрузить операторов из телефонии '
-      tags:
-        - Операторы
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              groups:
-                type: array
-                items: {}
-              operators:
-                type: array
-                items: {}
-          examples:
-            example-1: {}
-  /project/available_projects:
-    get:
-      summary: Получить список доступных проектов
-      tags:
-        - Проекты
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-          examples:
-            Пример:
-              id: 105010
-              name: SpeechAnalytics
-      description: 'TODO: надо так же возвращать права пользователя в аккаунте, чтобы скрывать какие-то элементы интерфейса'
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-    parameters: []
-  '/project/{project_id}/user/acl':
-    parameters:
-      - type: integer
-        name: project_id
-        in: path
-        required: true
-    get:
-      summary: Права доступа текущего пользователя
-      tags:
-        - ACL
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              permissions:
-                type: object
-                required:
-                  - permission
-                  - level
-                properties:
-                  permission:
-                    type: string
-                  level:
-                    type: string
-                  object_id:
-                    type: integer
-                    description: Номер отчета или шаблона оценок
-            required:
-              - permissions
-      operationId: get_acl
-      description: '-'
-  '/project/{project_id}/users':
-    get:
-      summary: Пользователи с доступом к проекту
-      tags:
-        - ACL
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              users:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    username:
-                      type: string
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                    id:
-                      type: string
-                    phone:
-                      type: string
-          examples:
-            Пример:
-              users:
-                - username: ra@speech.one
-                  first_name: Александр
-                  last_name: ''
-                  acl:
-                    role: supervisor
-                    billing: write
-                    info: write
-                    acl: write
-                    operators: write
-                    integration: write
-                    new_reports: write
-                    new_templates: write
-                - username: aa@speech.one
-                  first_name: Алексей
-                  last_name: К
-                  acl:
-                    role: analyst
-                    billing: read
-                    info: write
-                    new_reports: read
-                    new_templates: read
-                - username: demo@speech.one
-                  first_name: demo
-                  last_name: ''
-                  acl:
-                    role: demo
-      description: 'Возвращает список пользователей, у которых есть доступ к проекту'
-      operationId: get_users
-    parameters:
-      - type: integer
-        name: project_id
-        in: path
-        required: true
-  /calls:
-    get:
-      parameters:
-        - type: string
-          in: query
-          name: telephony_id
-          description: id звонка из телефонии
-      description: '-'
-      responses:
-        '200':
-          description: OK
-      summary: Звонки
-      operationId: calls
-      tags:
-        - Отчеты
-        - Звонок
-    parameters: []
-  /reports:
-    get:
-      produces:
-        - application/json
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      responses:
-        '200':
-          description: OK
-          schema:
-            properties: {}
-            type: object
-      tags:
-        - Отчеты
-      summary: Отчеты
-      description: "Это API позволяет получать информацию по избранным звонкам: как только\n    приходит новый звонок, удовлетворяющий фильтрам отчета, система отправляет\n    информацию по звонку на указанный сервер.\n\n\n    ### Схема работы с API:\n\n\n    1. Получить список отчетов через метод `/reports`\n\n    2. Выбрать нужные отчеты и создать по ним триггеры с помощью метода\n    `/reports/trigger`, указав при этом номер отчета и url-адрес, на который\n    будут отправляться POST-запросы с данными о звонках.\n\n    3. Принимать и обрабатывать сообщения со звонками.\n\n\n    ## Специальные триггеры\n\n\n    Можно использовать готовые интеграции на основе триггеров со сторонними\n    системами. \n\n    Для этого надо указать \"специальный\" endpoint_url для подписки на триггеры.\n\n\n    ### MarketingHub\n\n\n    Для [marketinghub.ru](http://marketinghub.ru/) можно настроить экспорт\n    телефонных номеров клиентов из звонков, попавших в отчет в аудиторию для\n    последующего таргетинга рекламы.\n\n    В качестве endpoint_url надо указать урл вида marketinghub://<access_token>\n\n\n    ### Usedesk\n\n\n    Для [usedesk.ru](http://usedesk.ru/) можно настроить пересылку транскрибаций\n    звонков, попавших в отчет. В качестве endpoint_url надо указать урл вида\n    usedesk://<api_token>@api.usedesk.ru/\n\n\n    ## Обработка сообщений\n\n\n    Endpoint указанный в запросе должен принимать на вход json со следующими\n    полями:\n\n        report_id - id отчёта\n        calls - список звонков, где каждый звонок - это объект со следующими полями:\n        \n        id - внутренний id звонка Speech Analytics\n        telephony_id - id звонка из телефонии\n        date_of_call - дата звонка\n        phone_number_client - номер клиента\n        phone_number_operator - номер оператора\n        operator_name - имя оператора\n        transcript - транскрибация звонка (текст распознанного диалога)\n\n    Пример:\n\n        {\n           \"report_id\":12345678,\n           \"calls\":[\n              {\n                 \"id\":1482470,\n                 \"telephony_id\":\"1557839653.1800447\",\n                 \"date_of_call\":1557839654,\n                 \"phone_number_client\":\"+79261708580\",\n                 \"phone_number_operator\":\"270\",\n                 \"transcript\":[...]\n              },\n              {\n                 \"id\":1481981,\n                 \"telephony_id\":\"1557829764.1796966\",\n                 \"date_of_call\":1557829764,\n                 \"phone_number_client\":\"+79261708580\",\n                 \"phone_number_operator\":\"270\",\n                 \"transcript\":[\n                       {\n                          \"phrase\":\"Добрый день\",\n                          \"timeEnd\":0.5100000000000051,\n                          \"timeBegin\":0.2700000000000031,\n                          \"role\":\"client\"\n                       },\n                       {\n                          \"phrase\":\"Здравствуйте\",\n                          \"timeEnd\":4.1,\n                          \"timeBegin\":1.46,\n                          \"role\":\"operator\"\n                       },\n                       {\n                          \"phrase\":\"Через час перезвоните, пожалуйста.\",\n                          \"timeEnd\":10.890000000000008,\n                          \"timeBegin\":5.190000000000005,\n                          \"role\":\"client\"\n                       },\n                       {\n                          \"phrase\":\"Так через час\",\n                          \"timeEnd\":13.860000000000001,\n                          \"timeBegin\":11.55,\n                          \"role\":\"operator\"\n                       },\n                       ...\n                  ],\n              },\n              ...\n           ]\n        }\n\n    Ответ на запрос тоже должен быть в json-формате, ожидается следующий ответ:\n\n        {\"success\": true}\n\n    Подробную информацию о звонке можно получить с помощью GET-запроса\n    `/api/v1/calls/{id звонка}`\n\n\n    # Примеры триггеров:\n\n\n    ### **Пример 1. Молниеносное оповещение о технических проблемах на сайте\n    компании.**\n\n\n    Клиент зашел на сайт компании, перешел на страницу ЖК, но не смог записаться\n    на демонстрацию объекта. Он позвонил по указанному на сайте телефонному\n    номеру и сообщил, что «**`На сайте проблема, я не смог записаться на\n    демонстрацию`**» и попросил записать его по телефону. \n\n    **Действие:** Через 5 минут этот звонок попал в отчет \"`**Проблемы на\n    сайте**`\" по фразе клиента из звонка \"`**на сайте проблема**`\". Мы сразу же\n    по данному событию отправили IT-специалисту письмо либо создали тикет в\n    поддержке с задачей проверить информацию из звонка клиента. Включили в тикет\n    название отчета, номер клиента, дату звонка, ссылку на запись звонка,\n    транскрибацию диалога.\n\n\n    ### **Пример 2. Маркетинговые активности на основе того, что говорит ваш\n    клиент.**\n\n\n    Клиент позвонил застройщику и уточнил какие варианты квартир есть в \"`**ЖК\n    Дикий Запад**`\", также сказал, что обязательно нужен \"**`подземный\n    паркинг`**\". Менеджер дал всю необходимую информацию и клиент пошел думать. \n\n    **Действие:** Этот звонок через 5 минут попал в отчеты «`**ЖК Дикий\n    Запад**`» и «**`Подземный паркинг`**» по произнесенным клиентом ключевым\n    словам. По данному событию мы тут же передали телефон клиента в аудитории\n    рекламной площадки Facebook Ads. Одна аудитория используются в связке с\n    креативами где мы продаем ЖК Дикий Запад, а вторая демонстрирует, что можно\n    получить скидку на паркинг 50% при оплате квартиры и паркинга до конца\n    месяца. Таким образом мы моментально подогреваем клиента для продажи.\n\n\n    ### **Пример 3. Как узнать об ошибке менеджера и спасти сделку с клиентом за\n    5 минут.**\n\n\n    На финальной стадии сделки клиент позвонил менеджеру и спросил \"`**Почему в\n    договоре отсутствует обещанная скидка**`\". Менеджер сказал, что скидки\n    больше не действуют. Клиент очень расстроился и отказался от сделки. \n\n    **Действие:** Этот звонок через 5 минут попал в отчет \"**`Невыполненные\n    обещания`**\" и тут же отправилось письмо и смс руководителю отдела продаж с\n    детальной информацией в том числе, кто был менеджер. Руководитель отдела\n    связался с менеджером, дальше с клиентом и вернул сделку."
-      operationId: reports
-  /reports/trigger:
-    post:
-      consumes:
-        - application/json
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-        - in: body
-          name: body
-          schema:
-            properties:
-              endpoint_url:
-                type: string
-              report_id:
-                type: integer
-            type: object
-      description: |-
-        Метод принимает json-объект с параметрами:
-        ```
-        report_id - идентификатор отчета
-        endpoint_url - url на который будут отправляться звонки
-        ```
-      summary: Подписка на триггеры
-      operationId: AddTriggerSubscription
-      responses:
-        '200':
-          description: OK
-          examples: {}
-      tags:
-        - Триггеры
-    parameters: []
-  '/reports/trigger/{trigger_id}/delete':
-    parameters:
-      - in: path
-        name: trigger_id
-        required: true
-        type: string
-    post:
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      responses:
-        '200':
-          description: OK
-      description: |-
-        Пример:
-
-            POST /api/v1/reports/trigger/2/delete
-        THIS IS DEPRECATED METHOD
-      summary: Удаление подписки на триггеры
-      tags:
-        - Триггеры
-  /reports/triggers:
-    get:
-      produces:
-        - application/json
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      responses:
-        '200':
-          description: OK
-          schema:
-            properties:
-              triggers:
-                items:
-                  properties:
-                    endpoint_url:
-                      type: string
-                    id:
-                      type: integer
-                    report_id:
-                      type: integer
-                    report_name:
-                      type: string
-                  type: object
-                type: array
-            type: object
-          examples:
-            example-1: {}
-      summary: Список подписок на триггеры
-      description: |-
-        Список подписок на триггеры
-        THIS IS DEPRECATED METHOD
-      tags:
-        - Триггеры
-  '/project/{project_id}/rating/templates':
-    get:
-      produces:
-        - application/json
-      parameters:
-        - type: string
-          in: header
-          name: Authorization
-          description: basic autorisation for dev stends
-        - type: string
-          in: header
-          name: Cookie
-          required: true
-          description: session_id cookie
-      responses:
-        '200':
-          description: OK
-          schema:
-            items:
-              properties:
-                decription:
-                  type: string
-                frozen:
-                  type: boolean
-                functions:
-                  items: {}
-                  type: array
-                id:
-                  type: number
-                name:
-                  type: string
-              type: object
-            type: array
-      tags:
-        - Шаблоны оценки
-      description: '### Список доступных шаблонов оценок'
-      operationId: ratingTemplates
-      summary: Список доступных шаблонов оценок
-    parameters:
-      - type: integer
-        name: project_id
-        in: path
-        required: true
   '/project/{project_id}/metrics/list':
     get:
       produces:
@@ -1839,73 +712,1336 @@ paths:
         name: project_id
         in: path
         required: true
-  '/project/{project_id}/calls/calls_period':
-    post:
-      consumes:
-        - application/json
+  '/project/{project_id}/rating/templates':
+    get:
       produces:
         - application/json
       parameters:
-        - description: ''
+        - type: string
           in: header
-          name: Content-Type
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
           required: true
-          type: string
-        - description: |-
-            При том `telephony_id` - это идентификатор звонка из телефонии клиента,
-            а `id` - идентификатор звонка нашей системы.
-            Если `"transcript_id":null`, значит транскрибация для звонка отсутствует.
+          description: session_id cookie
+      responses:
+        '200':
+          description: OK
+          schema:
+            items:
+              properties:
+                decription:
+                  type: string
+                frozen:
+                  type: boolean
+                functions:
+                  items: {}
+                  type: array
+                id:
+                  type: number
+                name:
+                  type: string
+              type: object
+            type: array
+      tags:
+        - Шаблоны оценки
+      description: '### Список доступных шаблонов оценок'
+      operationId: ratingTemplates
+      summary: Список доступных шаблонов оценок
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+  /vocabularies:
+    get:
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              vocabularies:
+                items:
+                  properties:
+                    description:
+                      type: string
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    role:
+                      type: string
+                  type: object
+                type: array
+            type: object
+      tags: []
+      description: словари
+      operationId: vocabularies
+      summary: Список доступных словарей
+  /reports/triggers:
+    get:
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              triggers:
+                items:
+                  properties:
+                    endpoint_url:
+                      type: string
+                    id:
+                      type: integer
+                    report_id:
+                      type: integer
+                    report_name:
+                      type: string
+                  type: object
+                type: array
+            type: object
+          examples:
+            example-1: {}
+      summary: Список подписок на триггеры
+      description: |-
+        Список подписок на триггеры
+        THIS IS DEPRECATED METHOD
+      tags:
+        - Триггеры
+  '/reports/trigger/{trigger_id}/delete':
+    parameters:
+      - in: path
+        name: trigger_id
+        required: true
+        type: string
+    post:
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+      responses:
+        '200':
+          description: OK
+      description: |-
+        Пример:
+
+            POST /api/v1/reports/trigger/2/delete
+        THIS IS DEPRECATED METHOD
+      summary: Удаление подписки на триггеры
+      tags:
+        - Триггеры
+  /reports/trigger:
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+        - in: body
+          name: body
+          schema:
+            properties:
+              endpoint_url:
+                type: string
+              report_id:
+                type: integer
+            type: object
+      description: |-
+        Метод принимает json-объект с параметрами:
+        ```
+        report_id - идентификатор отчета
+        endpoint_url - url на который будут отправляться звонки
+        ```
+      summary: Подписка на триггеры
+      operationId: AddTriggerSubscription
+      responses:
+        '200':
+          description: OK
+          examples: {}
+      tags:
+        - Триггеры
+    parameters: []
+  /reports:
+    get:
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties: {}
+            type: object
+      tags:
+        - Отчеты
+      summary: Отчеты
+      description: "Это API позволяет получать информацию по избранным звонкам: как только\n    приходит новый звонок, удовлетворяющий фильтрам отчета, система отправляет\n    информацию по звонку на указанный сервер.\n\n\n    ### Схема работы с API:\n\n\n    1. Получить список отчетов через метод `/reports`\n\n    2. Выбрать нужные отчеты и создать по ним триггеры с помощью метода\n    `/reports/trigger`, указав при этом номер отчета и url-адрес, на который\n    будут отправляться POST-запросы с данными о звонках.\n\n    3. Принимать и обрабатывать сообщения со звонками.\n\n\n    ## Специальные триггеры\n\n\n    Можно использовать готовые интеграции на основе триггеров со сторонними\n    системами. \n\n    Для этого надо указать \"специальный\" endpoint_url для подписки на триггеры.\n\n\n    ### MarketingHub\n\n\n    Для [marketinghub.ru](http://marketinghub.ru/) можно настроить экспорт\n    телефонных номеров клиентов из звонков, попавших в отчет в аудиторию для\n    последующего таргетинга рекламы.\n\n    В качестве endpoint_url надо указать урл вида marketinghub://<access_token>\n\n\n    ### Usedesk\n\n\n    Для [usedesk.ru](http://usedesk.ru/) можно настроить пересылку транскрибаций\n    звонков, попавших в отчет. В качестве endpoint_url надо указать урл вида\n    usedesk://<api_token>@api.usedesk.ru/\n\n\n    ## Обработка сообщений\n\n\n    Endpoint указанный в запросе должен принимать на вход json со следующими\n    полями:\n\n        report_id - id отчёта\n        calls - список звонков, где каждый звонок - это объект со следующими полями:\n        \n        id - внутренний id звонка Speech Analytics\n        telephony_id - id звонка из телефонии\n        date_of_call - дата звонка\n        phone_number_client - номер клиента\n        phone_number_operator - номер оператора\n        operator_name - имя оператора\n        transcript - транскрибация звонка (текст распознанного диалога)\n\n    Пример:\n\n        {\n           \"report_id\":12345678,\n           \"calls\":[\n              {\n                 \"id\":1482470,\n                 \"telephony_id\":\"1557839653.1800447\",\n                 \"date_of_call\":1557839654,\n                 \"phone_number_client\":\"+79261708580\",\n                 \"phone_number_operator\":\"270\",\n                 \"transcript\":[...]\n              },\n              {\n                 \"id\":1481981,\n                 \"telephony_id\":\"1557829764.1796966\",\n                 \"date_of_call\":1557829764,\n                 \"phone_number_client\":\"+79261708580\",\n                 \"phone_number_operator\":\"270\",\n                 \"transcript\":[\n                       {\n                          \"phrase\":\"Добрый день\",\n                          \"timeEnd\":0.5100000000000051,\n                          \"timeBegin\":0.2700000000000031,\n                          \"role\":\"client\"\n                       },\n                       {\n                          \"phrase\":\"Здравствуйте\",\n                          \"timeEnd\":4.1,\n                          \"timeBegin\":1.46,\n                          \"role\":\"operator\"\n                       },\n                       {\n                          \"phrase\":\"Через час перезвоните, пожалуйста.\",\n                          \"timeEnd\":10.890000000000008,\n                          \"timeBegin\":5.190000000000005,\n                          \"role\":\"client\"\n                       },\n                       {\n                          \"phrase\":\"Так через час\",\n                          \"timeEnd\":13.860000000000001,\n                          \"timeBegin\":11.55,\n                          \"role\":\"operator\"\n                       },\n                       ...\n                  ],\n              },\n              ...\n           ]\n        }\n\n    Ответ на запрос тоже должен быть в json-формате, ожидается следующий ответ:\n\n        {\"success\": true}\n\n    Подробную информацию о звонке можно получить с помощью GET-запроса\n    `/api/v1/calls/{id звонка}`\n\n\n    # Примеры триггеров:\n\n\n    ### **Пример 1. Молниеносное оповещение о технических проблемах на сайте\n    компании.**\n\n\n    Клиент зашел на сайт компании, перешел на страницу ЖК, но не смог записаться\n    на демонстрацию объекта. Он позвонил по указанному на сайте телефонному\n    номеру и сообщил, что «**`На сайте проблема, я не смог записаться на\n    демонстрацию`**» и попросил записать его по телефону. \n\n    **Действие:** Через 5 минут этот звонок попал в отчет \"`**Проблемы на\n    сайте**`\" по фразе клиента из звонка \"`**на сайте проблема**`\". Мы сразу же\n    по данному событию отправили IT-специалисту письмо либо создали тикет в\n    поддержке с задачей проверить информацию из звонка клиента. Включили в тикет\n    название отчета, номер клиента, дату звонка, ссылку на запись звонка,\n    транскрибацию диалога.\n\n\n    ### **Пример 2. Маркетинговые активности на основе того, что говорит ваш\n    клиент.**\n\n\n    Клиент позвонил застройщику и уточнил какие варианты квартир есть в \"`**ЖК\n    Дикий Запад**`\", также сказал, что обязательно нужен \"**`подземный\n    паркинг`**\". Менеджер дал всю необходимую информацию и клиент пошел думать. \n\n    **Действие:** Этот звонок через 5 минут попал в отчеты «`**ЖК Дикий\n    Запад**`» и «**`Подземный паркинг`**» по произнесенным клиентом ключевым\n    словам. По данному событию мы тут же передали телефон клиента в аудитории\n    рекламной площадки Facebook Ads. Одна аудитория используются в связке с\n    креативами где мы продаем ЖК Дикий Запад, а вторая демонстрирует, что можно\n    получить скидку на паркинг 50% при оплате квартиры и паркинга до конца\n    месяца. Таким образом мы моментально подогреваем клиента для продажи.\n\n\n    ### **Пример 3. Как узнать об ошибке менеджера и спасти сделку с клиентом за\n    5 минут.**\n\n\n    На финальной стадии сделки клиент позвонил менеджеру и спросил \"`**Почему в\n    договоре отсутствует обещанная скидка**`\". Менеджер сказал, что скидки\n    больше не действуют. Клиент очень расстроился и отказался от сделки. \n\n    **Действие:** Этот звонок через 5 минут попал в отчет \"**`Невыполненные\n    обещания`**\" и тут же отправилось письмо и смс руководителю отдела продаж с\n    детальной информацией в том числе, кто был менеджер. Руководитель отдела\n    связался с менеджером, дальше с клиентом и вернул сделку."
+      operationId: reports
+  /calls:
+    get:
+      parameters:
+        - type: string
+          in: query
+          name: telephony_id
+          description: id звонка из телефонии
+      description: '-'
+      responses:
+        '200':
+          description: OK
+      summary: Звонки
+      operationId: calls
+      tags:
+        - Отчеты
+        - Звонок
+    parameters: []
+  /auth/login:
+    post:
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - description: ''
           in: body
           name: body
           schema:
             properties:
-              date_from:
-                type: integer
-              date_till:
-                type: integer
+              password:
+                type: string
+              username:
+                type: string
             type: object
+          x-examples:
+            demo:
+              password: demo
+              username: demo
+        - description: ''
+          in: body
+          name: body
+          schema:
+            properties:
+              password:
+                type: string
+              username:
+                type: string
+            type: object
+          x-examples:
+            example-1: {}
       responses:
         '200':
           description: OK
-          headers: {}
           schema:
             properties:
-              calls:
-                items:
-                  properties:
-                    account_id:
-                      type: integer
-                    date_of_call:
-                      type: integer
-                    duration:
-                      type: number
-                    id:
-                      type: integer
-                    phone_number_client:
-                      type: string
-                    phone_number_operator:
-                      type: string
-                    telephony_id:
-                      type: string
-                    type:
-                      type: string
-                  type: object
-                type:
-                  - string
-                  - array
+              success:
+                type: boolean
             type: object
+            x-examples:
+              example-1:
+                value:
+                  success: true
+          examples:
+            success:
+              success: true
       tags:
-        - Звонок
+        - Авторизация
       description: |-
-        **date_till** - начало временного промежутка (timestamp - целое число)
-        **date_from** - конец временного промежутка (timestamp - целое число)
-      operationId: callsPeriod
-      summary: Список звонков
+        В ответе есть директива **set-cookie** эту куку надо использовать во всех последующих запросах. |
+        Время жизни cookie - 1 год.
+      operationId: Login
+      summary: Login
+  '/account/{account_id}/groups':
+    parameters:
+      - type: integer
+        name: account_id
+        in: path
+        required: true
+    get:
+      summary: Группы операторов
+      tags:
+        - Операторы
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              groups:
+                type: array
+                items:
+                  $ref: ../common/models/operatogroup.v1.yaml
+          examples:
+            Пример:
+              groups:
+                - id: 463
+                  name: Продажи
+                - id: 464
+                  name: (Без группы)
+                  default: true
+                - id: 500
+                  name: Prodaji
+                  telephony: true
+            Пример-2:
+              groups:
+                - id: 463
+                  name: Операторы
+      description: Список групп операторов у аккаунта
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+      operationId: operator_groups
+  '/project/{project_id}/users':
+    get:
+      summary: Пользователи с доступом к проекту
+      tags:
+        - ACL
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              users:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    phone:
+                      type: string
+                    id:
+                      type: string
+          examples:
+            Пример:
+              users:
+                - username: ra@speech.one
+                  first_name: Александр
+                  last_name: ''
+                  acl:
+                    role: supervisor
+                    billing: write
+                    info: write
+                    acl: write
+                    operators: write
+                    integration: write
+                    new_reports: write
+                    new_templates: write
+                - username: aa@speech.one
+                  first_name: Алексей
+                  last_name: К
+                  acl:
+                    role: analyst
+                    billing: read
+                    info: write
+                    new_reports: read
+                    new_templates: read
+                - username: demo@speech.one
+                  first_name: demo
+                  last_name: ''
+                  acl:
+                    role: demo
+      description: 'Возвращает список пользователей, у которых есть доступ к проекту'
+      operationId: get_users
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+  /project/available_projects:
+    get:
+      summary: Получить список доступных проектов
+      tags:
+        - Проекты
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+          examples:
+            Пример:
+              id: 105010
+              name: SpeechAnalytics
+      description: 'TODO: надо так же возвращать права пользователя в аккаунте, чтобы скрывать какие-то элементы интерфейса'
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+    parameters: []
+  '/project/{project_id}/telephony/download_operators':
     parameters:
       - type: string
         name: project_id
         in: path
         required: true
+    post:
+      summary: 'Загрузить операторов из телефонии '
+      tags:
+        - Операторы
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              groups:
+                type: array
+                items: {}
+              operators:
+                type: array
+                items: {}
+          examples:
+            example-1: {}
+  '/project/{project_id}/enable_recognition_date':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Поменять дату старта распознования
+      tags:
+        - Настройки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              date:
+                type: integer
+          examples:
+            example-1:
+              date: 100500
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              date:
+                type: integer
+          x-examples:
+            example-1:
+              date: 100500
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              date:
+                type: integer
+          x-examples:
+            example-1: {}
+    get:
+      summary: Текущая дата старта распознования
+      tags:
+        - Настройки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              date:
+                type: integer
+  '/project/{project_id}/settings/telephony/check':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Проверка подключения к телефонии
+      tags:
+        - Настройки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+      description: Проверить подключение к телефонии
+  '/downloads/{filename}':
+    parameters:
+      - type: string
+        name: filename
+        in: path
+        required: true
+    get:
+      summary: Скачать файл по ранее полученному имени
+      tags: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/reports/{report_id}':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: report_id
+        in: path
+        required: true
+    delete:
+      summary: Удалить отчет
+      tags:
+        - Отчеты
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+    post:
+      summary: Создать отчет
+      tags:
+        - Отчеты
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+    put:
+      summary: Изменить отчет
+      tags:
+        - Отчеты
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/reports':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Получить список отчетов
+      tags:
+        - Отчеты
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            example-1:
+              reports:
+                - columns:
+                    - date_of_call
+                    - quantity
+                    - duration
+                    - duration_answer
+                    - operator_interjections_count_abs
+                    - client_interjections_count_abs
+                    - rating
+                  filters: {}
+                  frozen: false
+                  id: 45118624
+                  name: Лояльность клиентов
+                  phrase_filters: []
+                  rating_template_id: 41631094
+                  slices:
+                    - rating
+                - columns:
+                    - date_of_call
+                    - quantity
+                    - duration
+                    - duration_answer
+                    - operator_speech_duration
+                    - client_speech_duration
+                    - rating
+                  filters: {}
+                  frozen: false
+                  id: 42690241
+                  name: Качество работы операторов
+                  phrase_filters: []
+                  rating_template_id: 52385575
+                  slices:
+                    - operator
+                    - rating
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+  '/recording/async/download/{call_id}':
+    post:
+      summary: Начать загрузку звонка
+      tags:
+        - Звонок
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+    parameters:
+      - type: string
+        name: call_id
+        in: path
+        required: true
+  '/recording/async/signals/{call_id}':
+    parameters:
+      - type: string
+        name: call_id
+        in: path
+        required: true
+    post:
+      summary: Начать расчет осцилограмм
+      tags:
+        - Звонок
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/recording/async/get_result/{task_id}':
+    parameters:
+      - type: string
+        name: task_id
+        in: path
+        required: true
+    get:
+      summary: Получить статус инициорованной задачи
+      tags:
+        - Звонок
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/rating/templates/{rating_template_id}':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: rating_template_id
+        in: path
+        required: true
+    delete:
+      summary: Удалить шаблон оценки
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+    get:
+      summary: Получить шаблон оценки
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+    post:
+      summary: Добавить шаблон оценки
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+    put:
+      summary: Изменить шаблон оценки
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/rating/generate_metric_label':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Получить metric_label для новой метрики в шаблоне
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/rating/templates/check_existence':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Проверить есть ли шаблон по id/имени
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/rating/recalculation/start/{template_id}':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: template_id
+        in: path
+        required: true
+    post:
+      summary: Запустить пересчет оценок
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/rating/recalculation/stop/{rating_template_id}':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: rating_template_id
+        in: path
+        required: true
+    post:
+      summary: Остановить пересчет оценок
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/payment/history':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: История пополнений баланса
+      tags:
+        - Оплата
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/payment/discounts':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Тарифы при разных суммах пополнения
+      tags:
+        - Оплата
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/payment/bill/recognition_minutes':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Сгенирировать счет
+      tags:
+        - Оплата
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+      description: ''
+  '/calls/{call_id}/karaoke_timings':
+    parameters:
+      - type: string
+        name: call_id
+        in: path
+        required: true
+    post:
+      summary: Время для караоке
+      tags:
+        - Звонок
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+    get:
+      summary: Время для караоке
+      tags:
+        - Звонок
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/calls/id':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: 'Найти звонок по id из телефонии '
+      tags:
+        - Звонок
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+      parameters:
+        - type: string
+          in: query
+          name: telephony_id
+          required: true
+  /auth/registration:
+    post:
+      summary: Создать нового пользователя
+      tags:
+        - Авторизация
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  /auth/check_email:
+    post:
+      summary: Проверить свободность email для создания нового пользователя
+      tags:
+        - Авторизация
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      operationId: ''
+  /auth/logout:
+    post:
+      summary: Выйти из ситемы
+      tags:
+        - Авторизация
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+      operationId: logout
+  /async_reports/generate_node:
+    post:
+      summary: Получить данные для отображения блока в отчете
+      tags:
+        - Отчеты
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  /async_reports/generate_calls:
+    post:
+      summary: Получить звонки для отображения блока в отчете
+      tags:
+        - Отчеты
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  /async_reports/generate_plot:
+    post:
+      summary: Получить данныее отображения графика в отчете
+      tags:
+        - Отчеты
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+  '/project/{project_id}/settings':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Изменить настройки интеграции и операторов
+      responses:
+        '200':
+          description: OK
+    get:
+      summary: Получить настройки интеграции и операторов
+      tags:
+        - Настройки
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+  '/project/{project_id}':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Получить данные проекта
+      tags:
+        - Аккаунт
+      responses:
+        '200':
+          description: OK
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+  '/project/{project_id}/balance':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Получить баланс минут распознования
+      tags:
+        - Аккаунт
+        - Оплата
+      responses:
+        '200':
+          description: OK
+  '/project/{project_id}/reports/trigger/{trigger_id}/delete':
+    parameters:
+      - in: path
+        name: trigger_id
+        required: true
+        type: string
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+    post:
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+      responses:
+        '200':
+          description: OK
+      description: |-
+        Пример:
+
+            POST /api/v1/reports/trigger/2/delete
+      summary: Удаление подписки на триггеры
+      operationId: triggerSubcribtionRemove
+      tags:
+        - Триггеры
+  '/project/{project_id}/reports/trigger':
+    post:
+      consumes:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+        - in: body
+          name: body
+          schema:
+            properties:
+              endpoint_url:
+                type: string
+              report_id:
+                type: integer
+            type: object
+      description: |-
+        Метод принимает json-объект с параметрами:
+        ```
+        report_id - идентификатор отчета
+        endpoint_url - url на который будут отправляться звонки
+        ```
+      summary: Подписка на триггеры
+      operationId: triggerSubscription
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Триггеры
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+  '/project/{project_id}/reports/triggers':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+          description: basic autorisation for dev stends
+        - type: string
+          in: header
+          name: Cookie
+          required: true
+          description: session_id cookie
+      responses:
+        '200':
+          description: OK
+          schema:
+            properties:
+              triggers:
+                items:
+                  properties:
+                    endpoint_url:
+                      type: string
+                    id:
+                      type: integer
+                    report_id:
+                      type: integer
+                    report_name:
+                      type: string
+                  type: object
+                type: array
+            type: object
+          examples:
+            example-1: {}
+      summary: Список подписок на триггеры
+      operationId: triggerList
+      description: Список подписок на триггеры
+      tags:
+        - Триггеры
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+  '/project/{project_id}/rating/recalculation/status':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Статус пересчета шаблонов оценок
+      tags:
+        - Шаблоны оценки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties: {}
+          examples:
+            example-1:
+              result:
+                - progress: null
+                  rating_template_id: '41631094'
+                  state: obsolete
+                - progress: null
+                  rating_template_id: '52385575'
+                  state: obsolete
+      parameters:
+        - type: string
+          in: header
+          name: Authorization
+  '/project/{project_id}/user/check_email':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: 'Зная емейл, получить пользователя'
+      tags: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              vacant:
+                type: boolean
+              id:
+                type: string
+              email:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              phone:
+                type: string
+            required:
+              - vacant
+      description: 'Проверить, занят ли емейл, и, если да, вернуть данные пользователя'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+  '/project/{project_id}/user/add':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Добавить пользователя
+      tags: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              user_id:
+                type: integer
+      description: 'Добавляет пользователя с единственным правом: Менеджер'
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+              first_name:
+                type: string
+              last_name:
+                type: string
+              phone:
+                type: string
+            required:
+              - email
+              - password
+              - first_name
+          description: ''
+  '/project/{project_id}/user/{user_id}/acl':
+    parameters:
+      - type: string
+        name: project_id
+        in: path
+        required: true
+      - type: string
+        name: user_id
+        in: path
+        required: true
+    get:
+      summary: Список прав пользователя
+      tags: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              permissions:
+                type: object
+                required:
+                  - permission
+                  - level
+                properties:
+                  permission:
+                    type: string
+                  level:
+                    type: string
+                  object_id:
+                    type: integer
+                    description: Номер отчета или шаблона оценок
+            required:
+              - permissions
+      description: Список прав пользователя
+    post:
+      summary: Задать список прав
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+      description: |
+        Возможные права:
+        - manager: Менеджер - обязательно должно быть в списке прав, даёт некие базовые возможности
+        - change-operators: Настройка операторов
+        - change-telephony-credentials: Изменение учетных данных телефонии
+        - find-matching-transcripts: Поиск по звонкам
+        - billing: Баланс
+        - excel-reports: Выгрузка отчетов в excel
+        - acl: Распределение прав
+        - new-reports: Новые отчеты
+        - new-rating-templates: Новые шаблоны
+        - all-reports: Полный доступ ко всем отчетам
+        - all-rating-templates: Полный доступ ко всем шаблонам
+        - report: Определенный отчет - требуется указать id отчета в поле object_id, даёт доступ к определенному отчету
+        - rating-template: Определенный шаблон - требуется указать id шаблона в поле object_id, даёт доступ к определенному шаблону
+
+        Нужно также указать е-мейл пользователя
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              permissions:
+                type: object
+                required:
+                  - permission
+                  - level
+                properties:
+                  permission:
+                    type: string
+                  level:
+                    type: string
+                  object_id:
+                    type: integer
+                    description: Номер отчета или шаблона оценок
+            required:
+              - email
+              - permissions
+          description: ''
   '/account/{project_id}/operators':
     get:
       parameters:
@@ -2016,19 +2152,16 @@ paths:
           description: Обновленный полный список операторов
           x-examples:
             example-1: {}
-  '/project/{project_id}/user/{user_id}/acl':
+  '/project/{project_id}/user/acl':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
-        in: path
-        required: true
-      - type: string
-        name: user_id
         in: path
         required: true
     get:
-      summary: Список прав пользователя
-      tags: []
+      summary: Права доступа текущего пользователя
+      tags:
+        - ACL
       responses:
         '200':
           description: OK
@@ -2050,143 +2183,296 @@ paths:
                     description: Номер отчета или шаблона оценок
             required:
               - permissions
-      description: Список прав пользователя
-    post:
-      summary: Задать список прав
+      operationId: get_acl
+      description: '-'
+  '/project/{project_id}/tags':
+    get:
+      summary: Получить список тегов в проекте
+      tags:
+        - Теги
       responses:
         '200':
           description: OK
           schema:
             type: object
             properties:
-              success:
-                type: boolean
-      description: |
-        Возможные права:
-        - manager: Менеджер - обязательно должно быть в списке прав, даёт некие базовые возможности
-        - change-operators: Настройка операторов
-        - change-telephony-credentials: Изменение учетных данных телефонии
-        - find-matching-transcripts: Поиск по звонкам
-        - billing: Баланс
-        - excel-reports: Выгрузка отчетов в excel
-        - acl: Распределение прав
-        - new-reports: Новые отчеты
-        - new-rating-templates: Новые шаблоны
-        - all-reports: Полный доступ ко всем отчетам
-        - all-rating-templates: Полный доступ ко всем шаблонам
-        - report: Определенный отчет - требуется указать id отчета в поле object_id, даёт доступ к определенному отчету
-        - rating-template: Определенный шаблон - требуется указать id шаблона в поле object_id, даёт доступ к определенному шаблону
-
-        Нужно также указать е-мейл пользователя
-      parameters:
-        - in: body
-          name: body
+              tags:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    filters:
+                      type: array
+                      items:
+                        type: object
+                    phrase_filters:
+                      type: array
+                      items:
+                        type: object
+      operationId: get-project-project_id-tags
+      parameters: []
+      description: формат у filters и phrase_filters такой же как в отчетах
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+  '/project/{project_id}/tags/add':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Добавить тег
+      tags:
+        - Теги
+      responses:
+        '200':
+          description: OK
           schema:
             type: object
             properties:
-              email:
-                type: string
-              permissions:
+              tag:
                 type: object
-                required:
-                  - permission
-                  - level
-                properties:
-                  permission:
-                    type: string
-                  level:
-                    type: string
-                  object_id:
-                    type: integer
-                    description: Номер отчета или шаблона оценок
-            required:
-              - email
-              - permissions
-          description: ''
-  '/project/{project_id}/user/add':
-    parameters:
-      - type: string
-        name: project_id
-        in: path
-        required: true
-    post:
-      summary: Добавить пользователя
-      tags: []
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              success:
-                type: boolean
-              user_id:
-                type: integer
-      description: 'Добавляет пользователя с единственным правом: Менеджер'
+              recalculation_task_id:
+                type: string
+      operationId: post-project-project_id-tags-add
       parameters:
         - in: body
           name: body
           schema:
             type: object
             properties:
-              email:
+              title:
                 type: string
-              password:
-                type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              phone:
-                type: string
-            required:
-              - email
-              - password
-              - first_name
-          description: ''
-  '/project/{project_id}/user/check_email':
+              filters:
+                type: array
+                items:
+                  type: object
+              phrase_filters:
+                type: array
+                items:
+                  type: object
+  '/project/{project_id}/tags/{tag_id}/delete':
     parameters:
-      - type: string
+      - type: integer
         name: project_id
         in: path
         required: true
+      - type: integer
+        name: tag_id
+        in: path
+        required: true
     post:
-      summary: 'Зная емейл, получить пользователя'
-      tags: []
+      summary: Удалить тег
+      tags:
+        - Теги
       responses:
         '200':
           description: OK
           schema:
             type: object
             properties:
-              vacant:
-                type: boolean
+              delete_task_id:
+                type: string
+      operationId: post-project-project_id-tags-delete
+  '/project/{project_id}/tags/{tag_id}/update':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+      - type: integer
+        name: tag_id
+        in: path
+        required: true
+    post:
+      summary: Изменить тег
+      tags:
+        - Теги
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              recalculation_task_id:
+                type: string
+      operationId: post-project-project_id-tags-tag_id-update
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              filters:
+                type: array
+                items:
+                  type: object
+              phrase_filters:
+                type: array
+                items:
+                  type: object
+  '/project/{project_id}/labels':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+    get:
+      summary: Получить список меток
+      tags:
+        - Пользовательские метки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              labels:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+      operationId: get-project-project_id-labels
+  '/project/{project_id}/labels/add':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+    post:
+      summary: Создать новую метку
+      tags:
+        - Пользовательские метки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
               id:
+                type: number
+              title:
                 type: string
-              email:
-                type: string
-              first_name:
-                type: string
-              last_name:
-                type: string
-              phone:
-                type: string
-            required:
-              - vacant
-      description: 'Проверить, занят ли емейл, и, если да, вернуть данные пользователя'
+      operationId: post-project-project_id-labels-add
       parameters:
         - in: body
           name: body
           schema:
             type: object
             properties:
-              email:
+              title:
                 type: string
-basePath: /api/v1
-host: cloud.speechanalytics.ru
-x-components: {}
-securityDefinitions: {}
+  '/project/{project_id}/labels/{label_id}/delete':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+      - type: integer
+        name: label_id
+        in: path
+        required: true
+    post:
+      summary: Удалить метку
+      tags:
+        - Пользовательские метки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              delete_task_id:
+                type: string
+      operationId: post-project-project_id-labels-label_id-delete
+  '/project/{project_id}/labels/{label_id}/label_call/{call_id}':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+      - type: integer
+        name: label_id
+        in: path
+        required: true
+      - type: integer
+        name: call_id
+        in: path
+        required: true
+    post:
+      summary: Поставить метку звонку
+      tags:
+        - Пользовательские метки
+      responses: {}
+      operationId: post-project-project_id-labels-label_id-label_call-call_id
+  '/project/{project_id}/labels/{label_id}/unlabel_call/{call_id}':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+      - type: integer
+        name: label_id
+        in: path
+        required: true
+      - type: integer
+        name: call_id
+        in: path
+        required: true
+    post:
+      summary: Удалить метку у звона
+      tags:
+        - Пользовательские метки
+      responses: {}
+      operationId: post-project-project_id-labels-label_id-unlabel_call-call_id
+  '/project/{project_id}/labels/{label_id}/update':
+    parameters:
+      - type: integer
+        name: project_id
+        in: path
+        required: true
+      - type: integer
+        name: label_id
+        in: path
+        required: true
+    post:
+      summary: Поменять название метки
+      tags:
+        - Пользовательские метки
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+      operationId: post-project-project_id-labels-label_id-update
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
 definitions: {}
-schemes:
-  - https
-swagger: '2.0'
+securityDefinitions: {}
+x-components: {}
+host: cloud.speechanalytics.ru
+basePath: /api/v1
